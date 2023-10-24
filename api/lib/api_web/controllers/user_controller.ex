@@ -6,8 +6,16 @@ defmodule ApiWeb.UserController do
 
   action_fallback ApiWeb.FallbackController
 
-  def index(conn, _params) do
-    user = Schemas.list_users()
+  # def index(conn, _params) do
+  #   user = Schemas.list_users()
+  #   render(conn, "index.json", user: user)
+  # end
+
+  def index(conn, %{"email" => email, "username" => username}) do
+    user = Schemas.list_users_by_email_username(email, username)
+    if user == nil do
+      send_resp(conn, :not_found, "No user Found")
+    end
     render(conn, "index.json", user: user)
   end
 

@@ -10,6 +10,13 @@ defmodule Api.Schemas do
     Repo.all(User)
   end
 
+  def list_users_by_email_username(email, username) do
+    query = from(u in User,
+    where: u.email == ^email and u.username == ^username
+    )
+    Repo.all(query)
+  end
+
   def list_clocks do
     Repo.all(Clock)
   end

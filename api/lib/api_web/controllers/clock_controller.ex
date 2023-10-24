@@ -20,24 +20,24 @@ defmodule ApiWeb.ClockController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    clock = Schemas.get_clock!(id)
-    render(conn, "show.json", clock: clock)
-  end
+  # def show(conn, %{"id" => id}) do
+  #   clock = Schemas.get_clock!(id)
+  #   render(conn, "show.json", clock: clock)
+  # end
 
-  def update(conn, %{"id" => id, "clock" => clock_params}) do
-    clock = Schemas.get_clock!(id)
+  # def update(conn, %{"id" => id, "clock" => clock_params}) do
+  #   clock = Schemas.get_clock!(id)
 
-    with {:ok, %Clock{} = clock} <- Schemas.update_clock(clock, clock_params) do
-      render(conn, "show.json", clock: clock)
-    end
-  end
+  #   with {:ok, %Clock{} = clock} <- Schemas.update_clock(clock, clock_params) do
+  #     render(conn, "show.json", clock: clock)
+  #   end
+  # end
 
-  def delete(conn, %{"id" => id}) do
-    clock = Schemas.get_clock!(id)
+  # def delete(conn, %{"id" => id}) do
+  #   clock = Schemas.get_clock!(id)
 
-    with {:ok, %Clock{}} <- Schemas.delete_clock(clock) do
-      send_resp(conn, :no_content, "")
-    end
-  end
+  #   with {:ok, %Clock{}} <- Schemas.delete_clock(clock) do
+  #     send_resp(conn, :no_content, "")
+  #   end
+  # end
 end
