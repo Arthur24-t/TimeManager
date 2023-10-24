@@ -5,7 +5,7 @@ defmodule Api.Schemas.Clock do
   schema "clocks" do
     field :time, :utc_datetime
     field :status, :boolean
-    field :user, :integer
+    belongs_to :user, Api.Schemas.User
 
     timestamps()
   end

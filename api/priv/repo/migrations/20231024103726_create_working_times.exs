@@ -5,7 +5,7 @@ defmodule Api.Repo.Migrations.CreateWorkingTimes do
     create table(:working_times) do
       add :start, :naive_datetime
       add :end, :naive_datetime
-      add :user, :integer
+      add :user_id, references(:users)
 
       timestamps()
     end

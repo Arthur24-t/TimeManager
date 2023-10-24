@@ -5,7 +5,7 @@ defmodule Api.Repo.Migrations.CreateClocks do
     create table(:clocks) do
       add :time, :utc_datetime
       add :status, :boolean, default: false, null: false
-      add :user, :integer
+      add :user_id, references(:users)
 
       timestamps()
     end
