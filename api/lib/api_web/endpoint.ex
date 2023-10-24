@@ -1,4 +1,4 @@
-defmodule TodolistWeb.Endpoint do
+defmodule ApiWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :api
 
   # The session will be stored in the cookie and signed,
@@ -7,10 +7,10 @@ defmodule TodolistWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_api_key",
-    signing_salt: "WjR6lQM0"
+    signing_salt: "10eb13g+"
   ]
 
-  socket "/socket", TodolistWeb.UserSocket,
+  socket "/socket", ApiWeb.UserSocket,
     websocket: true,
     longpoll: false
 
@@ -48,5 +48,5 @@ defmodule TodolistWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
-  plug TodolistWeb.Router
+  plug ApiWeb.Router
 end

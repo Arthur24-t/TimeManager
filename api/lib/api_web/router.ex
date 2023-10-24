@@ -1,15 +1,15 @@
-defmodule TodolistWeb.Router do
-  use TodolistWeb, :router
+defmodule ApiWeb.Router do
+  use ApiWeb, :router
 
   pipeline :api do
     plug :accepts, ["json"]
   end
 
-  scope "/api", UsersApiWeb do
+  scope "/api", ApiWeb do
     pipe_through :api
-    resources "/users", UserController, except: [:new, :edit]
-    resources "/workingtimes", WorkingTimeController, except: [:new, :edit]
+    resources "/users", UserController, exept: [:new, :edit]
     resources "/clocks", ClockController, only: [:index, :create]
+    resources "/workingtimes", WorkingTimeController, exept: [:new, :edit]
   end
 
   # Enables LiveDashboard only for development
@@ -24,7 +24,7 @@ defmodule TodolistWeb.Router do
 
     scope "/" do
       pipe_through [:fetch_session, :protect_from_forgery]
-      live_dashboard "/dashboard", metrics: TodolistWeb.Telemetry
+      live_dashboard "/dashboard", metrics: ApiWeb.Telemetry
     end
   end
 end

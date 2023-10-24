@@ -8,16 +8,15 @@
 use Mix.Config
 
 config :api,
-  namespace: Todolist,
-  ecto_repos: [Todolist.Repo]
+  ecto_repos: [Api.Repo]
 
 # Configures the endpoint
-config :api, TodolistWeb.Endpoint,
+config :api, ApiWeb.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "qmw3mRes3UT54VkC7RzGsFp7u2zpPa6BO5rrvO0P+OfYMuM4GIDZqaORAkcKO77X",
-  render_errors: [view: TodolistWeb.ErrorView, accepts: ~w(json), layout: false],
-  pubsub_server: Todolist.PubSub,
-  live_view: [signing_salt: "TFja21Uc"]
+  secret_key_base: "XPyGMEpXtTxDg5UA5mqDuE3PZf8R6uva9dopU4RGWhU8DeCrZV4KVWWMW3z1A58a",
+  render_errors: [view: ApiWeb.ErrorView, accepts: ~w(json), layout: false],
+  pubsub_server: Api.PubSub,
+  live_view: [signing_salt: "UlrFMqgK"]
 
 # Configures Elixir's Logger
 config :logger, :console,

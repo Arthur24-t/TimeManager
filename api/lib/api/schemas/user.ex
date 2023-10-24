@@ -1,4 +1,4 @@
-defmodule Todolist.MyApp.User.User do
+defmodule Api.Schemas.User do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -9,12 +9,10 @@ defmodule Todolist.MyApp.User.User do
     timestamps()
   end
 
-  @required_fields ~w(username email)
-  @optional_fields ~w()
-
+  @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, @required_fields, @optional_fields)
+    |> cast(attrs, [:username, :email])
     |> validate_required([:username, :email])
     |> validate_format(:email, ~r/@/)
   end

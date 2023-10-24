@@ -1,14 +1,14 @@
-defmodule Todolist.MyApp.WorkingTimeTest do
-  use Todolist.DataCase
+defmodule Api.Schema.WorkingTimeTest do
+  use Api.DataCase
 
-  alias Todolist.MyApp.WorkingTime
+  alias Api.Schema.WorkingTime
 
   describe "working_times" do
-    alias Todolist.MyApp.WorkingTime.WorkingTime
+    alias Api.Schema.WorkingTime.WorkingTime
 
-    @valid_attrs %{start: ~N[2010-04-17 14:00:00], end: ~N[2010-04-17 14:00:00], user_id: 42}
-    @update_attrs %{start: ~N[2011-05-18 15:01:01], end: ~N[2011-05-18 15:01:01], user_id: 43}
-    @invalid_attrs %{start: nil, end: nil, user_id: nil}
+    @valid_attrs %{start: ~N[2010-04-17 14:00:00], user: 42, end: ~N[2010-04-17 14:00:00]}
+    @update_attrs %{start: ~N[2011-05-18 15:01:01], user: 43, end: ~N[2011-05-18 15:01:01]}
+    @invalid_attrs %{start: nil, user: nil, end: nil}
 
     def working_time_fixture(attrs \\ %{}) do
       {:ok, working_time} =
@@ -32,8 +32,8 @@ defmodule Todolist.MyApp.WorkingTimeTest do
     test "create_working_time/1 with valid data creates a working_time" do
       assert {:ok, %WorkingTime{} = working_time} = WorkingTime.create_working_time(@valid_attrs)
       assert working_time.start == ~N[2010-04-17 14:00:00]
+      assert working_time.user == 42
       assert working_time.end == ~N[2010-04-17 14:00:00]
-      assert working_time.user_id == 42
     end
 
     test "create_working_time/1 with invalid data returns error changeset" do
@@ -44,8 +44,8 @@ defmodule Todolist.MyApp.WorkingTimeTest do
       working_time = working_time_fixture()
       assert {:ok, %WorkingTime{} = working_time} = WorkingTime.update_working_time(working_time, @update_attrs)
       assert working_time.start == ~N[2011-05-18 15:01:01]
+      assert working_time.user == 43
       assert working_time.end == ~N[2011-05-18 15:01:01]
-      assert working_time.user_id == 43
     end
 
     test "update_working_time/2 with invalid data returns error changeset" do

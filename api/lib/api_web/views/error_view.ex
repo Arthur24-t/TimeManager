@@ -1,5 +1,5 @@
-defmodule TodolistWeb.ErrorView do
-  use TodolistWeb, :view
+defmodule ApiWeb.ErrorView do
+  use ApiWeb, :view
 
   # If you want to customize a particular status code
   # for a certain format, you may uncomment below.
