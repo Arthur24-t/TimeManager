@@ -12,8 +12,7 @@ defmodule ApiWeb.ClockView do
 
   def render("clock.json", %{clock: clock}) do
     %{id: clock.id,
-      start: clock.start,
-      end: clock.end,
-      user: clock.user}
+      time: clock.time,
+      status: clock.status}
   end
 end

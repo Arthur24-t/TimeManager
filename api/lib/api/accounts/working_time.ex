@@ -1,11 +1,13 @@
-defmodule Api.Schemas.WorkingTime do
+defmodule Api.Accounts.WorkingTime do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @primary_key {:id, :binary_id, autogenerate: true}
+  @foreign_key_type :binary_id
   schema "working_times" do
-    field :start, :naive_datetime
-    field :end, :naive_datetime
-    belongs_to :user, Api.Schemas.User
+    field :start, :utc_datetime
+    field :end, :utc_datetime
+    field :user, :binary_id
 
     timestamps()
   end

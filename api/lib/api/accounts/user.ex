@@ -1,7 +1,9 @@
-defmodule Api.Schemas.User do
+defmodule Api.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @primary_key {:id, :binary_id, autogenerate: true}
+  @foreign_key_type :binary_id
   schema "users" do
     field :username, :string
     field :email, :string
@@ -13,7 +15,6 @@ defmodule Api.Schemas.User do
   def changeset(user, attrs) do
     user
     |> cast(attrs, [:username, :email])
-    |> validate_required([:username, :email])
-    |> validate_format(:email, ~r/@/)
+    |> validate_format(:email, ~r/^[\w-.]+@([\w-]+.)+[\w-]{2,4}$/)
   end
 end
