@@ -1,11 +1,11 @@
 <template>
   <!-- <router-view /> -->
   <div v-if="!authentified">
-    <identification @data="updateData" />
+    <identification @authentication="updateAuthentication(true)" />
   </div>
   <div v-else class="main-view">
     <div>
-      <user @authentication="updateAuthentication(false)" :userID="user_data.id" />
+      <user @authentication="updateAuthentication(false)" />
       <working-time />
       <working-times />
       <clock-manager />

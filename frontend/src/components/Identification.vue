@@ -37,7 +37,8 @@ export default {
         submitForm() {
             GET(ENDPOINTS.GET_USER_BY_EMAIL_USERNAME, this.formData)
                 .then((response) => {
-                    this.$emit('data', response.data)
+                    localStorage.setItem('user', response.data.data.id)
+                    this.$emit('authentication')
                 })
                 .catch((error) => { console.dir(error) })
         }

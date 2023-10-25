@@ -44,14 +44,9 @@ import { ENDPOINTS } from '../api/endpoints';
 
 export default {
     name: 'User',
-    props: {
-        userID: {
-            type: Number,
-            required: true,
-        },
-    },
     data() {
         return {
+            userID : localStorage.getItem('user'),
             formData: {
                 user: {
                     username: '',
