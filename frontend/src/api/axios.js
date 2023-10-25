@@ -1,10 +1,9 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: 'https://localhost:7094',
+  baseURL: 'http://localhost:4000',
   headers: {
     'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
   },
   timeout: 6000,
   withCredentials: false,
@@ -39,6 +38,6 @@ export const PUT = async (url, data = null, queryParams = null) => {
     return instance.put(url, data, { ...setRequestConfig(queryParams) });
 };
 
-export const PATCH = async (url, data, queryParams = null) => {
+export const PATCH = async (url, data = null, queryParams = null) => {
     return instance.patch(url, data, { ...setRequestConfig(queryParams) });
 };

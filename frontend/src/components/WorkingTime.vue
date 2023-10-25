@@ -1,6 +1,13 @@
 <template>
-    <div>
-        WorkingTime
+    <div class="card">
+      <div class="card-header">
+        <slot name="header">WorkingTime</slot>
+      </div>
+      <div class="card-body">
+      </div>
+      <div class="card-footer">
+        <slot name="footer">Pied de carte</slot>
+      </div>
     </div>
 </template>
 
