@@ -6,14 +6,14 @@
         <div class="card-body">
             <div class="form-group">
                 <label for="username">Username :</label>
-                <input id="username" type="text" class="form-control" v-model="formData.username" />
+                <input id="username" type="text" class="form-control" v-model="formData.user.username" />
             </div>
             <div class="form-group">
                 <label for="email">E-mail :</label>
-                <input id="email" type="email" class="form-control" v-model="formData.email" />
+                <input id="email" type="email" class="form-control" v-model="formData.user.email" />
             </div>
             <div class="button-container">
-                <button @click="submitForm" class="btn btn-primary">Update</button>
+                <button @click="updateUser" class="btn btn-primary">Update</button>
             </div>
         </div>
         <div class="card-footer">
@@ -23,15 +23,50 @@
 </template>
   
 <script>
+import { GET, PUT } from '../api/axios';
+import { ENDPOINTS } from '../api/endpoints';
+
 export default {
     name: 'User',
+    props: {
+        userID: {
+            type: Number,
+            required: true,
+        },
+    },
     data() {
         return {
             formData: {
-                username:'',
-                email: ''
-            }
+                user: {
+                    username:'',
+                    email: ''
+                }
+            },
         }
+    },
+    methods: {
+        updateUser() {
+            PUT(ENDPOINTS.MODIFY_USER + this.userID, this.formData)
+            .then((response) => {
+                this.getUser()
+            })
+            .catch((error) => {
+                console.dir(error)
+            })
+        },
+        getUser() {
+            GET(ENDPOINTS.GET_USER_BY_ID + this.userID)
+            .then((response) => {
+                this.formData.user.username = response.data.data.username
+                this.formData.user.email = response.data.data.email
+            })
+            .catch((error) => {
+                console.dir(error)
+            })
+        },
+    },
+    created () {
+        this.getUser();
     },
 }
 </script>

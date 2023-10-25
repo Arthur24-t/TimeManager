@@ -38,6 +38,6 @@ export const PUT = async (url, data = null, queryParams = null) => {
     return instance.put(url, data, { ...setRequestConfig(queryParams) });
 };
 
-export const PATCH = async (url, data, queryParams = null) => {
+export const PATCH = async (url, data = null, queryParams = null) => {
     return instance.patch(url, data, { ...setRequestConfig(queryParams) });
 };
