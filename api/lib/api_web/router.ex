@@ -1,11 +1,11 @@
 # web/router.ex
+  defmodule ApiWeb.Router do
+    use ApiWeb, :router
 
-defmodule ApiWeb.Router do
-  use ApiWeb, :router
-
-  pipeline :api do
-    plug :accepts, ["json"]
-  end
+    pipeline :api do
+      plug :accepts, ["json"]
+      plug Corsica, origins: "*"
+    end
 
   scope "/api", ApiWeb do
     pipe_through :api
@@ -18,6 +18,7 @@ defmodule ApiWeb.Router do
     post "/workingtimes/:userID", WorkingTimeController, :create
     put "/workingtimes/:id", WorkingTimeController, :update
     delete "/workingtimes/:id", WorkingTimeController, :delete
+    match :options, "/*path", CorsController, :preflight
 
     # Enables LiveDashboard only for development
     if Mix.env() in [:dev, :test] do
