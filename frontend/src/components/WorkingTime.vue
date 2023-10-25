@@ -1,10 +1,10 @@
 <template>
-          <td>{{ formatTime(workingTime.start) }}</td>
-          <td>{{ formatTime(workingTime.end) }}</td>
-          <td>
-            <button @click="updateWorkingTime(workingTime.id)">Modifier</button>
-            <button @click="deleteWorkingTime(workingTime.id)">Supprimer</button>
-          </td>
+    <td>{{ formatTime(workingTime.start) }}</td>
+    <td>{{ formatTime(workingTime.end) }}</td>
+    <td>
+      <button @click="updateWorkingTime(workingTime.id)">Modifier</button>
+      <button @click="deleteWorkingTime(workingTime.id)">Supprimer</button>
+    </td>
 </template>
 
 <script>
@@ -57,9 +57,6 @@ export default {
       return moment(dateTime).format('YYYY-MM-DD HH:mm:ss');
     }
   },
-  created() {
-    this.getWorkingTimes("2023-01-12T12:45:14Z", "2023-12-12T12:45:14Z");
-  }
 };
 </script>
 

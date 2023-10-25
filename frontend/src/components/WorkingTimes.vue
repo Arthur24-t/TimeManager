@@ -1,21 +1,27 @@
 <template>
-  <div>
-    <h1>Working Times</h1>
-    <table>
-      <thead>
-        <tr>
-          <th>Start Time</th>
-          <th>End Time</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="time in workingTimes" :key="time.id">
-          <working-time :working-time="time" />
-          <!-- <td>{{ formatTime(time.start) }}</td>
-          <td>{{ formatTime(time.end) }}</td> -->
-        </tr>
-      </tbody>
-    </table>
+  <div class="card">
+        <div class="card-header">
+            <slot name="header">Working Times</slot>
+        </div>
+        <div class="card-body">
+          <table>
+            <tr v-if="workingTimes.length === 0">
+                <td>No Content</td>
+              </tr>
+            <thead v-else>
+              <tr>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Settings</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="time in workingTimes" :key="time.id">
+                <working-time :working-time="time" />
+              </tr>
+            </tbody>
+          </table>
+        </div>
   </div>
 </template>
 
@@ -51,7 +57,7 @@ export default {
     }
   },
   created() {
-    this.getWorkingTimes("2023-01-12T12:45:14Z", "2023-12-12T12:45:14Z");
+    this.getWorkingTimes("2023-09-12T12:13:12Z", "2023-12-12T12:45:14Z");
   }
 };
 </script>

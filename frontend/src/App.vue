@@ -6,7 +6,6 @@
   <div v-else class="main-view">
     <div>
       <user @authentication="updateAuthentication(false)" />
-      <working-time />
       <working-times />
       <clock-manager />
     </div>
