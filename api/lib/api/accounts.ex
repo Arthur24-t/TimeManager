@@ -38,9 +38,9 @@ defmodule Api.Accounts do
 
   def list_users_by_email_username(email, username) do
     query = from(u in User,
-    where: u.email == ^email and u.username == ^username
+      where: u.email == ^email and u.username == ^username
     )
-    Repo.one!(query)
+    Repo.one(query)
   end
 
   def get_user!(id), do: Repo.get!(User, id)
