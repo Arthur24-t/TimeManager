@@ -5,7 +5,7 @@
   </div>
   <div v-else class="main-view">
     <div>
-      <user :userID="user_data.id" />
+      <user @authentication="updateAuthentication(false)" :userID="user_data.id" />
       <working-time />
       <working-times />
       <clock-manager />
@@ -40,8 +40,11 @@ export default {
   },
   methods: {
     updateData(e) {
-      this.user_data = e.data[0];
-      if (this.user_data) this.authentified = true
+      this.user_data = e.data;
+      if (this.user_data) this.updateAuthentication(true)
+    },
+    updateAuthentication(e) {
+      this.authentified = e
     }
   },
 }
