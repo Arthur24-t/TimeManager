@@ -1,23 +1,21 @@
 defmodule ApiWeb.WorkingTimeControllerTest do
   use ApiWeb.ConnCase
 
-  alias Api.Schema.WorkingTime
-  alias Api.Schema.WorkingTime.WorkingTime
+  alias Api.Accounts
+  alias Api.Accounts.WorkingTime
 
   @create_attrs %{
-    start: ~N[2010-04-17 14:00:00],
-    user: 42,
-    end: ~N[2010-04-17 14:00:00]
+    start: "2010-04-17T14:00:00Z",
+    end: "2010-04-17T14:00:00Z"
   }
   @update_attrs %{
-    start: ~N[2011-05-18 15:01:01],
-    user: 43,
-    end: ~N[2011-05-18 15:01:01]
+    start: "2011-05-18T15:01:01Z",
+    end: "2011-05-18T15:01:01Z"
   }
-  @invalid_attrs %{start: nil, user: nil, end: nil}
+  @invalid_attrs %{start: nil, end: nil}
 
   def fixture(:working_time) do
-    {:ok, working_time} = WorkingTime.create_working_time(@create_attrs)
+    {:ok, working_time} = Accounts.create_working_time(@create_attrs)
     working_time
   end
 
@@ -41,9 +39,8 @@ defmodule ApiWeb.WorkingTimeControllerTest do
 
       assert %{
                "id" => id,
-               "end" => "2010-04-17T14:00:00",
-               "start" => "2010-04-17T14:00:00",
-               "user" => 42
+               "end" => "2010-04-17T14:00:00Z",
+               "start" => "2010-04-17T14:00:00Z"
              } = json_response(conn, 200)["data"]
     end
 
@@ -64,9 +61,8 @@ defmodule ApiWeb.WorkingTimeControllerTest do
 
       assert %{
                "id" => id,
-               "end" => "2011-05-18T15:01:01",
-               "start" => "2011-05-18T15:01:01",
-               "user" => 43
+               "end" => "2011-05-18T15:01:01Z",
+               "start" => "2011-05-18T15:01:01Z"
              } = json_response(conn, 200)["data"]
     end
 

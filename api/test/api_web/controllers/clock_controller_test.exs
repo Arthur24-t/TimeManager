@@ -1,23 +1,21 @@
 defmodule ApiWeb.ClockControllerTest do
   use ApiWeb.ConnCase
 
-  alias Api.Schemas
-  alias Api.Schemas.Clock
+  alias Api.Accounts
+  alias Api.Accounts.Clock
 
   @create_attrs %{
-    start: ~N[2010-04-17 14:00:00],
-    user: 42,
-    end: ~N[2010-04-17 14:00:00]
+    status: true,
+    time: "2010-04-17T14:00:00Z"
   }
   @update_attrs %{
-    start: ~N[2011-05-18 15:01:01],
-    user: 43,
-    end: ~N[2011-05-18 15:01:01]
+    status: false,
+    time: "2011-05-18T15:01:01Z"
   }
-  @invalid_attrs %{start: nil, user: nil, end: nil}
+  @invalid_attrs %{status: nil, time: nil}
 
   def fixture(:clock) do
-    {:ok, clock} = Schemas.create_clock(@create_attrs)
+    {:ok, clock} = Accounts.create_clock(@create_attrs)
     clock
   end
 
@@ -41,9 +39,8 @@ defmodule ApiWeb.ClockControllerTest do
 
       assert %{
                "id" => id,
-               "end" => "2010-04-17T14:00:00",
-               "start" => "2010-04-17T14:00:00",
-               "user" => 42
+               "status" => true,
+               "time" => "2010-04-17T14:00:00Z"
              } = json_response(conn, 200)["data"]
     end
 
@@ -64,9 +61,8 @@ defmodule ApiWeb.ClockControllerTest do
 
       assert %{
                "id" => id,
-               "end" => "2011-05-18T15:01:01",
-               "start" => "2011-05-18T15:01:01",
-               "user" => 43
+               "status" => false,
+               "time" => "2011-05-18T15:01:01Z"
              } = json_response(conn, 200)["data"]
     end
 

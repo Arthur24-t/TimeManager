@@ -1,8 +1,8 @@
 defmodule ApiWeb.UserControllerTest do
   use ApiWeb.ConnCase
 
-  alias Api.Schemas
-  alias Api.Schemas.User
+  alias Api.Accounts
+  alias Api.Accounts.User
 
   @create_attrs %{
     username: "some username",
@@ -15,7 +15,7 @@ defmodule ApiWeb.UserControllerTest do
   @invalid_attrs %{username: nil, email: nil}
 
   def fixture(:user) do
-    {:ok, user} = Schemas.create_user(@create_attrs)
+    {:ok, user} = Accounts.create_user(@create_attrs)
     user
   end
 
@@ -24,7 +24,7 @@ defmodule ApiWeb.UserControllerTest do
   end
 
   describe "index" do
-    test "lists all user", %{conn: conn} do
+    test "lists all users", %{conn: conn} do
       conn = get(conn, Routes.user_path(conn, :index))
       assert json_response(conn, 200)["data"] == []
     end

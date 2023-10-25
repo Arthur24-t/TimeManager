@@ -1,3 +1,5 @@
+# web/router.ex
+
 defmodule ApiWeb.Router do
   use ApiWeb, :router
 
@@ -7,24 +9,24 @@ defmodule ApiWeb.Router do
 
   scope "/api", ApiWeb do
     pipe_through :api
-    resources "/users", UserController, exept: [:new, :edit]
-    resources "/clocks", ClockController, only: [:index, :create]
-    resources "/workingtimes", WorkingTimeController, exept: [:new, :edit]
-  end
 
-  # Enables LiveDashboard only for development
-  #
-  # If you want to use the LiveDashboard in production, you should put
-  # it behind authentication and allow only admins to access it.
-  # If your application does not have an admins-only section yet,
-  # you can use Plug.BasicAuth to set up some basic authentication
-  # as long as you are also using SSL (which you should anyway).
-  if Mix.env() in [:dev, :test] do
-    import Phoenix.LiveDashboard.Router
+    resources "/users", UserController
+    resources "/clocks/:userID", ClockController, only: [:create]
+    get "/clocks/:userID", ClockController, :show
+    get "/workingtimes/:userID", WorkingTimeController, :index
+    get "/workingtimes/:userID/:id", WorkingTimeController, :show
+    post "/workingtimes/:userID", WorkingTimeController, :create
+    put "/workingtimes/:id", WorkingTimeController, :update
+    delete "/workingtimes/:id", WorkingTimeController, :delete
 
-    scope "/" do
-      pipe_through [:fetch_session, :protect_from_forgery]
-      live_dashboard "/dashboard", metrics: ApiWeb.Telemetry
+    # Enables LiveDashboard only for development
+    if Mix.env() in [:dev, :test] do
+      import Phoenix.LiveDashboard.Router
+
+      scope "/" do
+        pipe_through [:fetch_session, :protect_from_forgery]
+        live_dashboard "/dashboard", metrics: ApiWeb.Telemetry
+      end
     end
   end
 end
