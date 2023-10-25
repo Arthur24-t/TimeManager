@@ -13,5 +13,5 @@ export const ENDPOINTS = {
     DELETE_TIME: '/api/workingtimes/', // + add workingtime id
     //CLOCKING
     GET_CLOCK: '/api/clocks/', // + add userID
-    CREATE_CLOKC: '/api/clocks', // + add userID
+    CREATE_CLOKC: '/api/clocks/', // + add userID
 }

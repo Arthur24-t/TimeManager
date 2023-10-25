@@ -18,15 +18,11 @@ import { POST } from "../api/axios"
 import { ENDPOINTS } from "../api/endpoints"
 export default {
   name: 'ClockManager',
-  props: {
-    userID: {
-      type: Number,
-      required: true
-    },
-  },
   data() {
     return {
+      userID: localStorage.getItem('user'),
       startDateTime: null,
+      stopDateTime: null,
       clockIn: false,
       elapsedTime: 0,
       timer: null,
@@ -34,19 +30,43 @@ export default {
   },
   methods: {
     startClock() {
-      this.startDateTime = new Date().toLocaleDateString();
+      const data = {
+        clock: {
+          time: new Date(),
+          status: true,
+        }
+      };
+      POST(ENDPOINTS.CREATE_CLOKC + this.userID, data)
+        .then((response) => { console.dir("Created Start clock") })
+        .catch((error) => { console.dir(error) });
+      this.startDateTime = new Date();
       this.clockIn = true;
       this.timer = setInterval(() => {
         this.elapsedTime++;
       }, 1000);
     },
     stopClock() {
+      this.stopDateTime = new Date();
       clearInterval(this.timer);
-      const data = {
-        time: new Date().toLocaleDateString(),
-        status: false,
+      const dataClock = {
+        clock: {
+          time: this.stopDateTime,
+          status: false,
+        }
       };
-      POST(ENDPOINTS.CREATE_CLOKC + this.userID, data);
+      const dataTime = {
+        working_time: {
+          start: this.startDateTime,
+          end: this.stopDateTime,
+        }
+      };
+      POST(ENDPOINTS.CREATE_CLOKC + this.userID, dataClock)
+        .then((response) => { console.dir("Created Stop clock") })
+        .catch((error) => { console.dir(error) });
+
+      POST(ENDPOINTS.CREATE_TIME + this.userID, dataTime)
+        .then((response) => { console.dir("Created working time") })
+        .catch((error) => { console.dir(error) });
       this.startDateTime = null;
       this.clockIn = false;
       this.elapsedTime = 0;
