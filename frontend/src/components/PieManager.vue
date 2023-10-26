@@ -28,7 +28,7 @@ export default {
                 ]
             },
             chartOption: {
-                responsive: true,
+                responsive: false,
                 maintainAspectRatio: false  
             }
         }
@@ -112,13 +112,4 @@ export default {
 </script>
 
 <style scoped>
-
-.pie-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1.5rem;
-}
-
 </style>
