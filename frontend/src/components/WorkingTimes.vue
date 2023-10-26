@@ -106,6 +106,10 @@ export default {
   font-weight: bold;
 }
 
+table {
+  width: 100%;
+}
+
 td {
     text-align: center;
     vertical-align: middle;
