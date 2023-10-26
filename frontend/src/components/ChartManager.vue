@@ -1,22 +1,16 @@
 <template>
-    <div class="card">
-      <div class="card-header">
-        <slot name="header">ChartManager</slot>
-      </div>
-      <div class="card-body">
-      </div>
-      <div class="card-footer">
-        <slot name="footer">Pied de carte</slot>
-      </div>
-    </div>
+  <div>
+    <ChartBar />
+  </div>
 </template>
 
 <script>
-    export default {
-        name: 'ChartManager'
-    }
+import ChartBar from './ChartBar.vue';
+
+export default {
+  name: 'ChartManager',
+  components: {
+    ChartBar
+  }
+};
 </script>
-
-<style scoped>
-
-</style>
