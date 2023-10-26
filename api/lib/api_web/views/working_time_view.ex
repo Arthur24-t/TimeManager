@@ -1,5 +1,6 @@
 defmodule ApiWeb.WorkingTimeView do
   use ApiWeb, :view
+  use Timex
   alias ApiWeb.WorkingTimeView
 
   def render("index.json", %{working_times: working_times}) do
@@ -12,7 +13,7 @@ defmodule ApiWeb.WorkingTimeView do
 
   def render("working_time.json", %{working_time: working_time}) do
     %{id: working_time.id,
-      start: working_time.start,
-      end: working_time.end}
+      start: Timex.format!(working_time.start, "%Y-%m-%d %H:%M:%S", :strftime),
+      end: Timex.format!(working_time.end, "%Y-%m-%d %H:%M:%S", :strftime),}
   end
 end

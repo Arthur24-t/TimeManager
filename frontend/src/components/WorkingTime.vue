@@ -8,7 +8,6 @@
 </template>
 
 <script>
-import moment from 'moment';
 import { ENDPOINTS } from '../api/endpoints.js'; 
 import { POST, PUT, DELETE } from '../api/axios.js'; 
 
@@ -22,7 +21,7 @@ export default {
   data() {
     return {
       userId: localStorage.getItem('user'),
-    };
+    };  
   },
   methods: {
     createWorkingTime(newTime) {
@@ -53,9 +52,6 @@ export default {
           console.log('An error occurred while deleting the working time');
         });
     },
-    formatTime(dateTime) {
-      return moment(dateTime).format('YYYY-MM-DD HH:mm:ss');
-    }
   },
 };
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div class="card workingtime-card">
         <div class="card-header">
           <div class="working-times">
             <slot name="header">Working Times</slot>
@@ -73,9 +73,52 @@ export default {
 
 <style scoped>
 
+.workingtime-card {
+  overflow-y: scroll;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+.workingtime-card::-webkit-scrollbar {
+  width: 3px;
+}
+
+/* Track */
+.workingtime-card::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey; 
+  border-radius: 10px;
+}
+ 
+/* Handle */
+.workingtime-card::-webkit-scrollbar-thumb {
+  background: grey; 
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+.workingtime-card::-webkit-scrollbar-thumb:hover {
+  background: #b30000; 
+}
+
 .working-times {
   display: flex;
   justify-content: space-between;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+
+tbody {
+    height: 200px;
+    overflow-y: scroll;
+}
+
+td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+tr {
+    text-align: center;
 }
 
 </style>

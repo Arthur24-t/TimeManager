@@ -1,14 +1,19 @@
 <template>
-  <div class="clock-manager">
-    <div v-if="clockIn">
-      <p>Current start date time: {{ startDateTime }}</p>
-      <p>Elapsed Time: {{ formatTime(elapsedTime) }}</p>
-      <button @click="stopClock">Clock Out</button>
+  <div class="card clock-manager">
+    <div class="card-header">
+      <slot name="header">Clock Manager</slot>
     </div>
-    <div v-else>
-      <p>No work period in progress</p>
-      <p>Elapsed Time: {{ formatTime(elapsedTime) }}</p>
-      <button @click="startClock">Clock In</button>
+    <div class="card-body clock-manager-text">
+      <div v-if="clockIn">
+        <p>Work period in Progress</p>
+        <p>Elapsed Time: {{ formatTime(elapsedTime) }}</p>
+        <button @click="stopClock">Clock Out</button>
+      </div>
+      <div v-else>
+        <p>No work period in progress</p>
+        <p>Elapsed Time: {{ formatTime(elapsedTime) }}</p>
+        <button @click="startClock">Clock In</button>
+      </div>
     </div>
   </div>
 </template>
@@ -36,7 +41,7 @@ export default {
           status: true,
         }
       };
-      POST(ENDPOINTS.CREATE_CLOKC + this.userID, data)
+      POST(ENDPOINTS.CREATE_CLOCK + this.userID, data)
         .then((response) => { console.dir("Created Start clock") })
         .catch((error) => { console.dir(error) });
       this.startDateTime = new Date();
@@ -84,16 +89,20 @@ export default {
 </script>
 
 <style scoped>
-.clock-manager {
-  width: 500px;
-  border: 2px solid #3a669f;
+
+.clock-manager-text {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 200px;
   font-size: 24px;
   text-align: center;
+}
+
+.clock-manager {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 2px solid #3a669f;
+  border-radius: 4px;
 }
 
 button {

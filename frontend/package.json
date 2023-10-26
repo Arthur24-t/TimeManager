@@ -11,6 +11,7 @@
     "axios": "^1.5.1",
     "chart.js": "^4.4.0",
     "moment": "^2.29.4",
+    "mosha-vue-toastify": "^1.0.23",
     "vue": "^3.3.4",
     "vue-chartjs": "^5.2.0",
     "vue-router": "^4.2.5"

@@ -2,7 +2,8 @@
     <div class="identification">
         <div class="card">
             <div class="card-body">
-                <h2>Identification</h2>
+                <h2 v-if="isLoginForm">Identification</h2>
+                <h2 v-else>Registration</h2>
                 <div class="form-group">
                     <label for="username">Username</label>
                     <input id="username" type="text" class="form-control" v-model="formData.username" />
@@ -11,8 +12,13 @@
                     <label for="email">E-mail</label>
                     <input id="email" type="email" class="form-control" v-model="formData.email" />
                 </div>
-                <div class="button-container">
+                <div v-if="isLoginForm" class="button-container">
                     <button @click="submitForm" class="btn btn-primary">Log In</button>
+                    <div @click="updateLoginForm" class="account">Do not have an account ?</div>
+                </div>
+                <div v-else class="button-container">
+                    <button @click="createUser" class="btn btn-primary">Register</button>
+                    <div @click="updateLoginForm" class="account">Already have an account ?</div>
                 </div>
             </div>
         </div>
@@ -20,8 +26,9 @@
 </template>
   
 <script>
-import { GET } from "../api/axios"
+import { GET, POST } from "../api/axios"
 import { ENDPOINTS } from "../api/endpoints"
+import { createToast } from 'mosha-vue-toastify';
 
 export default {
     name: 'Identification',
@@ -30,17 +37,41 @@ export default {
             formData: {
                 username: '',
                 email: ''
-            }
+            },
+            isLoginForm: true
         };
     },
     methods: {
         submitForm() {
             GET(ENDPOINTS.GET_USER_BY_EMAIL_USERNAME, this.formData)
                 .then((response) => {
+                    createToast({ title: 'Sign IN Success', description: 'You are sucessfully connected' }, { type: 'success', position: 'bottom-right' });
                     localStorage.setItem('user', response.data.data.id)
                     this.$emit('authentication')
                 })
-                .catch((error) => { console.dir(error) })
+                .catch((error) => {
+                createToast({ title: 'Register Failed', description: 'Please try again...' }, { type: 'danger', position: 'bottom-right' });
+                })
+        },
+        createUser() {
+            const user = {
+                user: {
+                    username: this.formData.username,
+                    email: this.formData.email
+                }
+            }
+            POST(ENDPOINTS.CREATE_USER, user)
+            .then((response) => {
+                createToast({ title: 'Register Success', description: 'You are sucessfully connected' }, { type: 'success', position: 'bottom-right' });
+                localStorage.setItem('user', response.data.data.id)
+                this.$emit('authentication')
+            })
+            .catch((error) => {
+                createToast({ title: 'Register Failed', description: 'Please try again' }, { type: 'danger', position: 'bottom-right' });
+            })
+        },
+        updateLoginForm() {
+            this.isLoginForm = !this.isLoginForm
         }
     }
 }
@@ -78,12 +109,29 @@ export default {
 }
 
 .btn {
-    background-color: #007BFF;
-    color: #fff;
-    padding: 8px 16px;
+    padding: 10px 20px;
+    font-size: 18px;
+    color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
+}
+
+.btn-primary {
+    background-color: #3a669f;
+}
+
+.btn-primary:hover {
+  background-color: #504ba9;
+}
+
+.account {
+    margin-top: 0.5rem;
+    cursor: pointer;
+}
+
+.account:hover {
+    color: #007BFF;
 }
 </style>
   

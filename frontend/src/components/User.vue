@@ -1,5 +1,5 @@
 <template>
-    <div class="card">
+    <div class="card user-card">
         <div class="card-header">
             <slot name="header">User Info</slot>
         </div>
@@ -15,22 +15,6 @@
             <div class="button-container">
                 <button @click="updateUser" class="btn btn-primary">Update</button>
             </div>
-            <div class="button-container">
-                <button @click="updateShowCreateUser" class="btn btn-primary">Add a User</button>
-            </div>
-            <div v-if="showCreateUser">
-                <div class="form-group">
-                    <label for="username">Username :</label>
-                    <input id="username" type="text" class="form-control" v-model="createUserForm.user.username" />
-                </div>
-                <div class="form-group">
-                    <label for="email">E-mail :</label>
-                    <input id="email" type="email" class="form-control" v-model="createUserForm.user.email" />
-                </div>
-                <div class="button-container">
-                <button @click="createUser" class="btn btn-primary">Create User</button>
-            </div>
-            </div>
         </div>
         <div class="card-footer">
             <button @click="deleteUser" class="btn btn-secondary">Delete</button>
@@ -41,39 +25,32 @@
 <script>
 import { GET, PUT, DELETE, POST } from '../api/axios';
 import { ENDPOINTS } from '../api/endpoints';
+import { createToast } from 'mosha-vue-toastify';
 
 export default {
     name: 'User',
     data() {
         return {
-            userID : localStorage.getItem('user'),
+            userID: localStorage.getItem('user'),
             formData: {
                 user: {
                     username: '',
                     email: ''
                 }
             },
-            createUserForm: {
-                user: {
-                    username: '',
-                    email: ''
-                }
-            },
-            showCreateUser: false
         }
     },
     methods: {
         updateUser() {
             PUT(ENDPOINTS.MODIFY_USER + this.userID, this.formData)
                 .then((response) => {
+                    createToast({ title: 'Update Success', description: 'You are sucessfully updated' }, { type: 'success', position: 'bottom-right' });
                     this.getUser()
                 })
                 .catch((error) => {
+                    createToast({ title: 'Update Failed', description: 'Please try again...' }, { type: 'danger', position: 'bottom-right' });
                     console.dir(error)
                 })
-        },
-        updateShowCreateUser() {
-            this.showCreateUser = !this.showCreateUser
         },
         getUser() {
             GET(ENDPOINTS.GET_USER_BY_ID + this.userID)
@@ -85,17 +62,14 @@ export default {
                     console.dir(error)
                 })
         },
-        createUser() {
-            POST(ENDPOINTS.CREATE_USER, this.createUserForm)
-            .then((response) => {console.dir("created")})
-            .catch((error) => {console.dir(error)})
-        },
         deleteUser() {
             DELETE(ENDPOINTS.DELETE_USER + this.userID)
                 .then(() => {
+                    createToast({ title: 'Delete Success', description: 'You are sucessfully deleted' }, { type: 'success', position: 'bottom-right' });
                     this.$emit("authentication", false)
                 })
                 .catch((error) => {
+                    createToast({ title: 'Delete Failed', description: 'Please try again...' }, { type: 'danger', position: 'bottom-right' });
                     console.dir(error)
                 })
         }
@@ -107,6 +81,11 @@ export default {
 </script>
   
 <style scoped>
+.user-card {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
+
 .form-group {
     margin: 10px 0;
 }
@@ -124,19 +103,29 @@ export default {
 }
 
 .btn {
-    color: #fff;
-    padding: 8px 16px;
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 18px;
+    color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
 }
 
 .btn-primary {
-    background-color: #007BFF;
+    background-color: #3a669f;
+}
+
+.btn-primary:hover {
+    background-color: #504ba9;
 }
 
 .btn-secondary {
-    background-color: red;
+    background-color: #DD3224;
+}
+
+.btn-secondary:hover {
+    background-color: #9A2319;
 }
 </style>
   

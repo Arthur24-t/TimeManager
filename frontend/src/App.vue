@@ -1,13 +1,15 @@
 <template>
   <!-- <router-view /> -->
-  <div v-if="!authentified">
+  <div v-if="!authentified" class="identification-view">
     <identification @authentication="updateAuthentication(true)" />
   </div>
   <div v-else class="main-view">
-    <div>
-      <user @authentication="updateAuthentication(false)" />
+    <div class="left-view">
+      <div class="user-clock">
+        <user @authentication="updateAuthentication(false)" />
+        <clock-manager />
+      </div>
       <working-times />
-      <clock-manager />
     </div>
     <chart-manager />
   </div>
@@ -51,13 +53,26 @@ export default {
 
 <style>
 
-.main-view {
+.identification-view {
   display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-view {
+  display: grid;
+  grid-template-columns: 30vw 65vw; 
   gap: 1.5rem;
+}
+
+.left-view {
+  display: grid;
+  grid-template-rows: 45vh 50vh;
 }
 
 .card {
     border: 1px solid #ccc;
+    background-color: white;
     border-radius: 4px;
     padding: 16px;
     margin: 8px;
@@ -76,6 +91,12 @@ export default {
   .card-footer {
     margin-top: 10px;
     color: #666;
+  }
+
+  .user-clock {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    gap: 0.5rem;
   }
 
 </style>
