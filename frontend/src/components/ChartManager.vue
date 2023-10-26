@@ -4,6 +4,7 @@
         <slot name="header">ChartManager</slot>
       </div>
       <div class="card-body">
+        <pie-manager />
       </div>
       <div class="card-footer">
         <slot name="footer">Pied de carte</slot>
@@ -12,8 +13,13 @@
 </template>
 
 <script>
+import PieManager from './PieManager.vue';
+
     export default {
-        name: 'ChartManager'
+        name: 'ChartManager',
+        components: {
+          PieManager
+        }
     }
 </script>
 
