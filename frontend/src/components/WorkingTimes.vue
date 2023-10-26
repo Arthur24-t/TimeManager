@@ -1,7 +1,12 @@
 <template>
   <div class="card">
         <div class="card-header">
+          <div class="working-times">
             <slot name="header">Working Times</slot>
+            <button @click="refresh">
+              <img src="../assets/refresh.png" alt="..." />
+            </button>
+          </div>
         </div>
         <div class="card-body">
           <table>
@@ -39,7 +44,8 @@ export default {
   data() {
     return {
       userId: localStorage.getItem('user'),
-      workingTimes: []
+      workingTimes: [],
+      isRotating: false
     };
   },
   methods: {
@@ -54,7 +60,10 @@ export default {
     },
     formatTime(dateTime) {
       return moment(dateTime).format('YYYY-MM-DD HH:mm:ss');
-    }
+    },
+    refresh() {
+      this.getWorkingTimes('2023-09-12T12:13:12Z', '2023-12-12T12:45:14Z');
+    },
   },
   created() {
     this.getWorkingTimes("2023-09-12T12:13:12Z", "2023-12-12T12:45:14Z");
@@ -63,5 +72,10 @@ export default {
 </script>
 
 <style scoped>
-/* Add your styles here */
+
+.working-times {
+  display: flex;
+  justify-content: space-between;
+}
+
 </style>
