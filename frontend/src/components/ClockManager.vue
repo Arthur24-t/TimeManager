@@ -66,7 +66,7 @@ export default {
           end: this.stopDateTime,
         }
       };
-      POST(ENDPOINTS.CREATE_CLOKC + this.userID, dataClock)
+      POST(ENDPOINTS.CREATE_CLOCK + this.userID, dataClock)
         .then((response) => { console.dir("Created Stop clock") })
         .catch((error) => { console.dir(error) });
 
