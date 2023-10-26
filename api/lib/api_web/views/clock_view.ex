@@ -1,5 +1,6 @@
 defmodule ApiWeb.ClockView do
   use ApiWeb, :view
+  use Timex
   alias ApiWeb.ClockView
 
   def render("index.json", %{clocks: clocks}) do
@@ -12,7 +13,7 @@ defmodule ApiWeb.ClockView do
 
   def render("clock.json", %{clock: clock}) do
     %{id: clock.id,
-      time: clock.time,
+      time: Timex.format!(clock.time, "%Y-%m-%d %H:%M:%S", :strftime),
       status: clock.status}
   end
 end

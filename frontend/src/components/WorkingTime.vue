@@ -1,14 +1,13 @@
 <template>
-    <td>{{ formatTime(workingTime.start) }}</td>
-    <td>{{ formatTime(workingTime.end) }}</td>
+    <td>{{ workingTime.start }}</td>
+    <td>{{ workingTime.end }}</td>
     <td>
-      <button @click="updateWorkingTime(workingTime.id)">Modifier</button>
+      <button @click="updateWorkingTime(workingTime.id)" >Modifier</button>
       <button @click="deleteWorkingTime(workingTime.id)">Supprimer</button>
     </td>
 </template>
 
 <script>
-import moment from 'moment';
 import { ENDPOINTS } from '../api/endpoints.js'; 
 import { POST, PUT, DELETE } from '../api/axios.js'; 
 
@@ -22,7 +21,7 @@ export default {
   data() {
     return {
       userId: localStorage.getItem('user'),
-    };
+    };  
   },
   methods: {
     createWorkingTime(newTime) {
@@ -53,9 +52,6 @@ export default {
           console.log('An error occurred while deleting the working time');
         });
     },
-    formatTime(dateTime) {
-      return moment(dateTime).format('YYYY-MM-DD HH:mm:ss');
-    }
   },
 };
 </script>

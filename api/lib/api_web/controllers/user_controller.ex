@@ -50,10 +50,17 @@ defmodule ApiWeb.UserController do
   end
 
   def delete(conn, %{"id" => id}) do
-    user = Accounts.get_user!(id)
-
-    with {:ok, %User{}} <- Accounts.delete_user(user) do
-      send_resp(conn, :no_content, "")
+    case Accounts.get_user(id) do
+      nil ->
+        send_resp(conn, :not_found, "User not found")
+      %User{} = user ->
+        case Accounts.delete_user(user) do
+          {:ok, %User{}} ->
+            send_resp(conn, :no_content, "")
+          {:error, reason} ->
+            send_resp(conn, :unprocessable_entity, "error: #{reason}")
+        end
     end
   end
+
 end
