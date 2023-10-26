@@ -1,22 +1,16 @@
 <template>
-    <div class="card">
-      <div class="card-header">
-        <slot name="header">ChartManager</slot>
-      </div>
-      <div class="card-body">
-      </div>
-      <div class="card-footer">
-        <slot name="footer">Pied de carte</slot>
-      </div>
-    </div>
+  <div>
+    <LinearChart />
+  </div>
 </template>
-
+ 
 <script>
-    export default {
-        name: 'ChartManager'
-    }
+import LinearChart from './LinearChart.vue';
+ 
+export default {
+  name: 'ChartManager',
+  components: {
+    LinearChart
+  }
+};
 </script>
-
-<style scoped>
-
-</style>
