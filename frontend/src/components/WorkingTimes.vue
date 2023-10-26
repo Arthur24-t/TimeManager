@@ -4,7 +4,7 @@
           <div class="working-times">
             <slot name="header">Working Times</slot>
             <button @click="refresh">
-              <img src="../assets/refresh.png" alt="..." />
+              Refresh
             </button>
           </div>
         </div>
