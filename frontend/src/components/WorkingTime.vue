@@ -1,9 +1,9 @@
 <template>
     <td>{{ formatTime(workingTime.start) }}</td>
     <td>{{ formatTime(workingTime.end) }}</td>
-    <td>
-      <button @click="updateWorkingTime(workingTime.id)">Modifier</button>
-      <button @click="deleteWorkingTime(workingTime.id)">Supprimer</button>
+    <td class="settings">
+      <button @click="updateWorkingTime(workingTime.id)" class="btn btn-update">Update</button>
+      <button @click="deleteWorkingTime(workingTime.id)" class="btn btn-delete">Delete</button>
     </td>
 </template>
 
@@ -61,5 +61,36 @@ export default {
 </script>
 
 <style scoped>
-/* Add your styles here */
+
+.btn {
+  margin-top: 10px;
+    padding: 5px 20px;
+    font-size: 15px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-update {
+    background-color: #FFB90F;
+}
+
+.btn-update:hover {
+  background-color: #CC940C;
+}
+
+.btn-delete {
+  background-color: #DD3224;
+}
+
+.btn-delete:hover {
+    background-color: #9A2319;
+}
+
+.settings {
+  display: flex;
+  gap: 0.5rem;
+}
+
 </style>
