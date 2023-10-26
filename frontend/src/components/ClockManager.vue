@@ -6,6 +6,7 @@
     <div class="card-body clock-manager-text">
       <div v-if="clockIn">
         <p>Work period in Progress</p>
+        <img src="../assets/horloge.gif" alt="horloge" width="100" />
         <p>Elapsed Time: {{ formatTime(elapsedTime) }}</p>
         <button @click="stopClock">Clock Out</button>
       </div>

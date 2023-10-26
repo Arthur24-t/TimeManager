@@ -61,7 +61,7 @@ export default {
 
 .main-view {
   display: grid;
-  grid-template-columns: 30vw 65vw; 
+  grid-template-columns: 40vw 55vw; 
   gap: 1.5rem;
 }
 

@@ -10,10 +10,7 @@
         </div>
         <div class="card-body">
           <table>
-            <tr v-if="workingTimes.length === 0">
-                <td>No Content</td>
-              </tr>
-            <thead v-else>
+            <thead>
               <tr>
                 <th>Start Time</th>
                 <th>End Time</th>
@@ -21,8 +18,11 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="time in workingTimes" :key="time.id">
-                <working-time :working-time="time" />
+              <tr>
+                <working-time :creation="true" @refresh="refresh" />
+              </tr>
+              <tr v-if="workingTimes.length != 0" v-for="time in workingTimes" :key="time.id">
+                <working-time :creation="false" :working-time="time" @refresh="refresh" />
               </tr>
             </tbody>
           </table>
@@ -104,12 +104,6 @@ export default {
   justify-content: space-between;
   font-size: 1.2rem;
   font-weight: bold;
-}
-
-
-tbody {
-    height: 200px;
-    overflow-y: scroll;
 }
 
 td {
