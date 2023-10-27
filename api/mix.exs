@@ -45,7 +45,10 @@ defmodule Api.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:cors_plug, "~> 3.0"},
-      {:timex, "~> 3.7"}   ]
+      {:timex, "~> 3.7"},
+      {:guardian, "~> 2.1"},
+      {:bcrypt_elixir, "~> 3.1.0"},
+      {:poison, "~> 4.0"},   ]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.

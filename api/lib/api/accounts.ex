@@ -4,6 +4,7 @@ defmodule Api.Accounts do
   """
 
   import Ecto.Query, warn: false
+  import Bcrypt
   alias Api.Repo
 
   alias Api.Accounts.User
@@ -63,6 +64,18 @@ defmodule Api.Accounts do
     |> Repo.insert()
   end
 
+    def authenticate(email, password) do
+    case Repo.get_by(User, email: email) do
+      nil ->
+        {:error, "User not found"}
+      user ->
+        if password == user.password do
+          {:ok, user}
+        else
+          {:error, "Invalid password"}
+        end
+    end
+  end
   @doc """
   Updates a user.
 

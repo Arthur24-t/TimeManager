@@ -6,6 +6,21 @@
       plug :accepts, ["json"]
     end
 
+    pipeline :authenticated do
+      plug Guardian.Plug.Pipeline,
+        module: Api.Auth.Guardian,
+        error_handler: Api.Auth.GuardianErrorHandler
+      plug Guardian.Plug.EnsureAuthenticated
+    end
+
+    scope "/", ApiWeb do
+      pipe_through :api
+
+      post "/register", AuthController, :register
+      post "/login", AuthController, :login
+    end
+
+
   scope "/api", ApiWeb do
     pipe_through :api
 
@@ -18,15 +33,5 @@
     put "/workingtimes/:id", WorkingTimeController, :update
     delete "/workingtimes/:id", WorkingTimeController, :delete
     match :options, "/*path", CorsController, :preflight
-
-    # Enables LiveDashboard only for development
-    if Mix.env() in [:dev, :test] do
-      import Phoenix.LiveDashboard.Router
-
-      scope "/" do
-        pipe_through [:fetch_session, :protect_from_forgery]
-        live_dashboard "/dashboard", metrics: ApiWeb.Telemetry
-      end
-    end
   end
 end
