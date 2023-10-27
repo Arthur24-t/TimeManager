@@ -76,6 +76,7 @@ export default {
       this.startDateTime = null;
       this.clockIn = false;
       this.elapsedTime = 0;
+      this.$emit('needrefresh')
     },
     formatTime(seconds) {
       const mins = Math.floor(seconds / 60);
@@ -90,7 +91,6 @@ export default {
 </script>
 
 <style scoped>
-
 .clock-manager-text {
   display: flex;
   flex-direction: column;

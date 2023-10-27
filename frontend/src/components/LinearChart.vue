@@ -15,15 +15,20 @@ ChartJS.register(Title, Tooltip, Legend, CategoryScale, LinearScale, LineElement
 export default {
   name: 'LineChart',
   components: { Line },
+  props: {
+    needRefresh: {
+      type: Boolean,
+    },
+  },
   data() {
     return {
       status: [],
       userID: localStorage.getItem('user'),
       chartData: {
-        labels: [0, 8, 10, 12, 14, 16, 18],
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
         datasets: [
           {
-            label: 'Niveau d activité',
+            label: 'Monthly Work Hours',
             borderColor: '#00a3e0',
             borderWidth: 2,
             pointRadius: 5,
@@ -43,14 +48,14 @@ export default {
             beginAtZero: true,
             title: {
               display: true,
-              text: 'Hours'
+              text: 'Annualy Work Hours'
             }
           },
           y: {
             beginAtZero: true,
             title: {
               display: true,
-              text: 'Activity Level'
+              text: 'Hours'
             }
           }
         }
@@ -58,48 +63,85 @@ export default {
     };
   },
   methods: {
-    getClock() {
-      GET(ENDPOINTS.GET_CLOCK + this.userID)
+    getDaysOfTheYear() {
+      const year = new Date().getFullYear()
+      const dayYear = new Date(year, 0, 1);
+      const endYear = new Date(year, 11, 31);
+      return (
+        {
+          start: dayYear.toISOString(),
+          end: endYear.toISOString()
+        }
+      )
+    },
+    getTime() {
+      const params = this.getDaysOfTheYear()
+      GET(ENDPOINTS.GET_ALL_TIME + this.userID, params)
         .then((response) => {
-          const today = new Date();
-          const data = response.data.data.map(item => ({
-            status: item.status ? 1 : 0,
-            time: new Date(item.time).getHours(),
-            date: new Date(item.time).getDate()
-          }));
+          const currentYear = new Date().getFullYear();
+          const totalWorkMonth = {
+            1: 0,
+            2: 0,
+            3: 0,
+            4: 0,
+            5: 0,
+            6: 0,
+            7: 0,
+            8: 0,
+            9: 0,
+            10: 0,
+            11: 0,
+            12: 0
+          };
 
-          const currentDate = today.getDate();
-          this.status = data.filter(item => item.time >= 7 && item.time < 19 && item.date === currentDate);
-          console.dir(this.status)
+          response.data.data.forEach((item) => {
+            const start = new Date(item.start);
+            const end = new Date(item.end);
+            while (start <= end && start.getFullYear() === currentYear) {
+              const month = start.getMonth() + 1;
+              totalWorkMonth[month] += 1 / 60;
+              start.setMinutes(start.getMinutes() + 1);
+            }
+          });
+
           this.$nextTick(() => {
             this.chartData = {
-              labels: this.status.map(item => item.time),
+              labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
               datasets: [
                 {
-                  label: 'Activity Level',
-                  borderColor: '#00a3e0',
+                  label: 'Monthly Work Hours',
+                  borderColor: '#999999',
                   borderWidth: 2,
                   pointRadius: 5,
-                  pointBackgroundColor: '#00a3e0',
-                  pointBorderColor: '#00a3e0',
-                  data: this.status.map(item => item.status),
-                  fill: false
+                  pointBackgroundColor: ['#0000FF', '#800080', '#00FF00', '#FFC0CB', '#FFFF00', '#00FF80', '#FF0000', '#FFA500', '#87CEEB', '#8B4513', '#808080', '#FFFFFF'],
+                  pointBorderColor: ['#0000FF', '#800080', '#00FF00', '#FFC0CB', '#FFFF00', '#00FF80', '#FF0000', '#FFA500', '#87CEEB', '#8B4513', '#808080', '#FFFFFF'],
+                  data: [],
+                  fill: false,
+                  data: Object.values(totalWorkMonth)
                 }
               ]
             };
           });
 
-          // this.chartData.labels = this.status.map(item => item.time);
-          // this.chartData.datasets[0].data = this.status.map(item => item.status);
         })
         .catch((error) => {
-          console.dir(error);
-        });
+          console.dir(error)
+        })
+    },
+    refresh() {
+      this.getTime();
+    },
+  },
+  watch: {
+    needRefresh(newValue) {
+      if (newValue) {
+        this.refresh()
+        this.$emit("needrefresh")
+      }
     }
-  }
-  ,
+  },
   created() {
-    this.getClock();
+    this.getTime();
   }
 };
 </script>

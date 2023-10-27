@@ -1,12 +1,5 @@
 <template>
-    <div class="chart-container">
-        <div class="navigation">
-            <span @click="previousWeek">&#x25C0;</span>
-            <span>{{ currentWeek }}</span>
-            <span @click="nextWeek">&#x25B6;</span>
-        </div>
-        <Bar :data="chartData" :options="chartOptions" />
-    </div>
+    <Bar :data="chartData" :options="chartOptions" />
 </template>
   
 <script>
@@ -21,6 +14,11 @@ ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 export default {
     name: 'BarChart',
     components: { Bar },
+    props: {
+        needRefresh: {
+            type: Boolean,
+        },
+    },
     data() {
         return {
             userId: localStorage.getItem('user'),
@@ -59,21 +57,40 @@ export default {
             }
         };
     },
-    computed: {
-        currentWeek() {
-            let startOfWeek = this.currentDate.clone().startOf('isoWeek');
-
-            while (startOfWeek.isoWeekday() !== 1) {
-                startOfWeek.add(1, 'day');
-            }
-            let endOfWeek = startOfWeek.clone().add(4, 'days');
-            return `${startOfWeek.format('YYYY-MM-DD')} to ${endOfWeek.format('YYYY-MM-DD')}`;
-        },
-    },
     methods: {
-        getWorkingTimes(start, end) {
+        getCurrentWeek() {
+            const currentDate = new Date();
+            const dayOfWeek = currentDate.getDay();
+            const startOfWeek = new Date(currentDate);
+            const endOfWeek = new Date(currentDate);
+
+            const daysUntilMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+            // Set to the start of the week (00:00:00:000)
+            startOfWeek.setDate(currentDate.getDate() - daysUntilMonday);
+            startOfWeek.setHours(2);
+            startOfWeek.setMinutes(0);
+            startOfWeek.setSeconds(0);
+            startOfWeek.setMilliseconds(0);
+
+            const daysUntilFriday = 5 - dayOfWeek;
+            // Set to the end of the week (23:59:59:999)
+            endOfWeek.setDate(currentDate.getDate() + daysUntilFriday);
+            endOfWeek.setHours(25);
+            endOfWeek.setMinutes(59);
+            endOfWeek.setSeconds(59);
+            endOfWeek.setMilliseconds(999);
+
+            return (
+                {
+                    start: startOfWeek.toISOString(),
+                    end: endOfWeek.toISOString()
+                }
+            )
+        },
+        getWorkingTimes() {
             this.loaded = false;
-            GET(ENDPOINTS.GET_ALL_TIME + this.userId + '?start=' + start + '&end=' + end)
+            const params = this.getCurrentWeek()
+            GET(ENDPOINTS.GET_ALL_TIME + this.userId, params)
                 .then(response => {
                     this.dataResponse = response.data.data;
 
@@ -125,50 +142,29 @@ export default {
                     datasets: [
                         {
                             label: 'Weekly hours worked',
-                            backgroundColor: '#f87979',
+                            backgroundColor: ["#FF5733", "#33FF57", "#5733FF", "#FFFF33", "#33FFFF"],
                             data: daysOfWeek.map(day => weeklyData[day])
                         }
                     ]
                 };
             });
         },
-        previousWeek() {
-            console.dir("Prev")
-            this.currentDate.clone().subtract(7, 'days');
-            //this.fetchDataForCurrentWeek();
+        refresh() {
+            this.getWorkingTimes();
         },
-
-        nextWeek() {
-            console.dir("Next")
-            this.currentDate.clone().add(7, 'days');
-            //this.fetchDataForCurrentWeek();
-        },
-
-        // fetchDataForCurrentWeek() {
-        //     const startOfWeek = this.currentDate.clone().startOf('isoWeek').format();
-        //     const endOfWeek = this.currentDate.clone().endOf('isoWeek').format();
-        //     this.getWorkingTimes(startOfWeek, endOfWeek);
-        // },
     },
-
+    watch: {
+        needRefresh(newValue) {
+            if (newValue) {
+                this.refresh()
+                this.$emit("needrefresh")
+            }
+        }
+    },
     created() {
-        this.getWorkingTimes("2023-09-12T12:13:12Z", "2023-12-12T12:45:14Z");
-        //this.fetchDataForCurrentWeek();
+        this.getWorkingTimes();
     },
 };
 </script>
   
-<style scoped>
-.chart-container {
-    width: 400px;
-    height: 400px;
-    margin: auto;
-}
-
-.navigation {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-    font-size: 20px;
-}
-</style>
+<style scoped></style>

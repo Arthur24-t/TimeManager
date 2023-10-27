@@ -7,9 +7,9 @@
     <div class="left-view">
       <div class="user-clock">
         <user @authentication="updateAuthentication(false)" />
-        <clock-manager />
+        <clock-manager @needrefresh="updateNeedRefresh(true)" />
       </div>
-      <working-times />
+      <working-times @needrefresh="updateNeedRefresh(false)" :need-refresh="needrefresh" />
     </div>
     <chart-manager />
   </div>
@@ -36,7 +36,8 @@ export default {
   data() {
     return {
       user_data: null,
-      authentified: false
+      authentified: false,
+      needrefresh: false
     }
   },
   methods: {
@@ -46,6 +47,9 @@ export default {
     },
     updateAuthentication(e) {
       this.authentified = e
+    },
+    updateNeedRefresh(e) {
+      this.needrefresh = e
     }
   },
 }

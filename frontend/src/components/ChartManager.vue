@@ -1,14 +1,23 @@
 <template>
     <div class="card">
       <div class="card-header">
-        <slot name="header">ChartManager</slot>
+        <div class="chart-manager">
+          <slot name="header">ChartManager</slot>
+          <button @click="updateNeedRefresh(true)">
+            Refresh Graph
+          </button>
+        </div>
       </div>
       <div class="card-body chart">
         <div class="pie-bar-chart">
-          <pie-chart />
-          <chart-bar />
+          <div class="mid">
+            <pie-chart @needrefresh="updateNeedRefresh(false)" :need-refresh="needrefresh" />
+          </div>
+          <div class="mid">
+            <chart-bar @needrefresh="updateNeedRefresh(false)" :need-refresh="needrefresh"  />
+          </div>
         </div>
-        <linear-chart />
+        <linear-chart @needrefresh="updateNeedRefresh(false)" :need-refresh="needrefresh" />
       </div>
       <div class="card-footer">
       </div>
@@ -26,7 +35,17 @@ export default {
     ChartBar,
     PieChart,
     LinearChart
-  }
+  },
+  data() {
+    return {
+      needrefresh: false
+    }
+  },
+  methods: {
+    updateNeedRefresh(e) {
+      this.needrefresh = e
+    }
+  },
 };
 </script>
 
@@ -46,7 +65,19 @@ export default {
 .pie-bar-chart {
   display: flex;
   flex-direction: row;
-  gap: 1.5rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.mid {
+  width: 50%;
+}
+
+.chart-manager {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.2rem;
+  font-weight: bold;
 }
 
 </style>
