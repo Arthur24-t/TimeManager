@@ -11,7 +11,7 @@ import { ENDPOINTS } from '../api/endpoints'
 ChartJS.register(ArcElement, Tooltip, Legend)
 
 export default {
-    name: 'PieManager',
+    name: 'PieChart',
     components: {
         Pie
     },
@@ -29,7 +29,7 @@ export default {
             },
             chartOption: {
                 responsive: false,
-                maintainAspectRatio: false  
+                maintainAspectRatio: false,
             }
         }
     },
@@ -111,5 +111,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

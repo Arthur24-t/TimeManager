@@ -52,7 +52,6 @@ export default {
 </script>
 
 <style>
-
 .identification-view {
   display: flex;
   align-items: center;
@@ -61,7 +60,7 @@ export default {
 
 .main-view {
   display: grid;
-  grid-template-columns: 40vw 55vw; 
+  grid-template-columns: 40vw 55vw;
   gap: 1.5rem;
 }
 
@@ -71,32 +70,47 @@ export default {
 }
 
 .card {
-    border: 1px solid #ccc;
-    background-color: white;
-    border-radius: 4px;
-    padding: 16px;
-    margin: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .card-header {
-    font-size: 1.2rem;
-    font-weight: bold;
-  }
-  
-  .card-body {
-    margin-top: 10px;
-  }
-  
-  .card-footer {
-    margin-top: 10px;
-    color: #666;
-  }
+  border: 1px solid #ccc;
+  background-color: white;
+  border-radius: 4px;
+  padding: 16px;
+  margin: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
-  .user-clock {
-    display: grid;
-    grid-template-columns: 50% 50%;
-    gap: 0.5rem;
-  }
+.card-header {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
 
+.card-body {
+  margin-top: 10px;
+}
+
+.card-footer {
+  margin-top: 10px;
+  color: #666;
+}
+
+.user-clock {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  gap: 0.5rem;
+}
+
+:-webkit-scrollbar {
+  width: 3px;
+}
+
+/* Track */
+:-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+}
+
+/* Handle */
+:-webkit-scrollbar-thumb {
+  background: grey;
+  border-radius: 10px;
+}
 </style>
