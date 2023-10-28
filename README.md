@@ -12,7 +12,7 @@ Utilisation d'une collection POSTMAN afin tester les différentes routes de l'AP
 Afin de gérer l'organisation au sein du projet et suivre l'avancée des différentes tâches, mise en place d'un JIRA avec ticketing : `https://timemanagement2.atlassian.net/jira/software/projects/KAN/boards/1`
 
 
-## Thème 1 : API
+## Thème 1 : API test
 
 Voir le README.md associé dans le répertoire [API](./api/README.md)
 
