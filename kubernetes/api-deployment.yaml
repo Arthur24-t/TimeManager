@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+      - name: api
+        image: <your-api-image>
+        env:
+        - name: DATABASE_URL
+          value: "ecto://postgres:1234@db/api_dev"
+        volumeMounts:
+        - mountPath: /app
+          name: app-code
+      volumes:
+      - name: app-code
+        hostPath:
+          path: /path/to/your/api/code
+      initContainers:
+      - name: init-db
+        image: <your-api-image>
+        command: ["/bin/sh", "-c", "mix ecto.create && mix ecto.migrate"]
