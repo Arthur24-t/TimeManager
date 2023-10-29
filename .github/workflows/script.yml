@@ -22,6 +22,6 @@ jobs:
         port: ${{ secrets.SSH_PORT }}
         script: |
           cd /home/Arthur/project/TimeManager
-          docker-compose down
+          sudo docker-compose down
           git pull
-          docker-compose up --build -d
+          sudo docker-compose up --build -d
