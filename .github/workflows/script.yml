@@ -13,6 +13,14 @@ jobs:
     - name: Checkout du code
       uses: actions/checkout@v2
 
+    - name: Ajout de la clé SSH
+      run: |
+        echo "${{ secrets.SSH_KEYPRIV }}" > .ssh/id_rsa
+        echo "${{ secrets.SSH_KEYPUB }}" > .ssh/id_rsa.pub
+        chmod 600 id_rsa
+        ssh-agent -a $SSH_AUTH_SOCK
+        ssh-add id_rsa
+
     - name: Déploiement via SSH
       uses: appleboy/ssh-action@master
       with:
