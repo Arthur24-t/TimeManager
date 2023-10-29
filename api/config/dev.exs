@@ -5,7 +5,7 @@ config :api, Api.Repo,
   username: "postgres",
   password: "1234",
   database: "api_dev",
-  hostname: "localhost",
+  hostname: "db",
   port: 5432,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
