@@ -2,7 +2,7 @@
     <div class="identification">
         <div class="card">
             <div class="card-body">
-                <h2 v-if="isLoginForm">Identificationsss</h2>
+                <h2 v-if="isLoginForm">Identification</h2>
                 <h2 v-else>Registration</h2>
                 <div class="form-group">
                     <label for="username">Username</label>
