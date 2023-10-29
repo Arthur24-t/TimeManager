@@ -20,9 +20,9 @@ jobs:
         touch .ssh/id_rsa.pub
         echo "${{ secrets.SSH_KEYPRIV }}" > .ssh/id_rsa
         echo "${{ secrets.SSH_KEYPUB }}" > .ssh/id_rsa.pub
-        chmod 600 id_rsa
+        chmod 600 .ssh/id_rsa
         ssh-agent -a $SSH_AUTH_SOCK
-        ssh-add id_rsa
+        ssh-add .ssh/id_rsa
 
     - name: Déploiement via SSH
       uses: appleboy/ssh-action@master
