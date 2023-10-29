@@ -15,12 +15,11 @@ jobs:
 
     - name: Ajout de la clé SSH
       run: |
-        mkdir .ssh
-        touch .ssh/id_rsa
-        touch .ssh/id_rsa.pub
+        mkdir -p .ssh
         echo "${{ secrets.SSH_KEYPRIV }}" > .ssh/id_rsa
         echo "${{ secrets.SSH_KEYPUB }}" > .ssh/id_rsa.pub
         chmod 600 .ssh/id_rsa
+        eval $(ssh-agent -s)
         ssh-add .ssh/id_rsa
 
     - name: Déploiement via SSH
