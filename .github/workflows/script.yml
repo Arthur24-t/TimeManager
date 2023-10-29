@@ -27,6 +27,7 @@ jobs:
       with:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_KEYPRIV }}
         port: ${{ secrets.SSH_PORT }}
         script: |
           cd /home/Arthur/project/TimeManager
