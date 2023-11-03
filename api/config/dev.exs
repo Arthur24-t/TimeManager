@@ -59,4 +59,5 @@ config :phoenix, :plug_init_mode, :runtime
 
 config :api, Api.Guardian,
   issuer: "api",
-  secret_key: "gTG4yP7DlnJIuCeXrdsBLhgzWX6S+v77lGQiMRfWXoZ2O4a3hKeB6g+ywz1UraxX"
+  secret_key: "gTG4yP7DlnJIuCeXrdsBLhgzWX6S+v77lGQiMRfWXoZ2O4a3hKeB6g+ywz1UraxX",
+  module: Api.Guardian

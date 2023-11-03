@@ -24,6 +24,7 @@ export default {
     return {
       status: [],
       userID: localStorage.getItem('user'),
+      token: localStorage.getItem('token'),
       chartData: {
         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
         datasets: [
@@ -32,8 +33,8 @@ export default {
             borderColor: '#00a3e0',
             borderWidth: 2,
             pointRadius: 5,
-            pointBackgroundColor: '#00a3e0',
-            pointBorderColor: '#00a3e0',
+            pointBackgroundColor: 'rgba(0, 163, 224, 0.7)', // Couleur des points du graphique (bleu semi-transparent)
+            pointBorderColor: 'rgba(0, 163, 224, 0.7)',
             data: [],
             fill: false
           }
@@ -42,6 +43,17 @@ export default {
       chartOptions: {
         responsive: true,
         maintainAspectRatio: false,
+        plugins: {
+            title: {
+              display: true,
+              text: 'Monthly Work Hours',
+              color: '#000',
+              font: {
+                size: 18,
+                weight: 'bold',
+              },
+            },
+          },
         scales: {
           x: {
             type: 'category',
@@ -76,7 +88,7 @@ export default {
     },
     getTime() {
       const params = this.getDaysOfTheYear()
-      GET(ENDPOINTS.GET_ALL_TIME + this.userID, params)
+      GET(ENDPOINTS.GET_ALL_TIME + this.userID, this.token, params)
         .then((response) => {
           const currentYear = new Date().getFullYear();
           const totalWorkMonth = {
@@ -146,10 +158,36 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .chart-container {
-  width: 400px;
-  height: 300px;
+  width: 100%;
+  max-width: 600px;
   margin: 20px auto;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.5); /* Fond semi-transparent */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+
+.chartjs-title {
+  font-size: 18px;
+  color: #00a3e0; 
+}
+
+.chartjs-legend {
+  font-size: 14px;
+  color: #777; 
+}
+
+.chartjs-x-axis-label {
+  font-size: 16px;
+  color: #00a3e0; 
+}
+
+.chartjs-y-axis-label {
+  font-size: 16px;
+  color: #00a3e0; 
 }
 </style>
+

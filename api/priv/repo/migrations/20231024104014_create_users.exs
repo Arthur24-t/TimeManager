@@ -7,10 +7,11 @@ defmodule Api.Repo.Migrations.CreateUsers do
       add :username, :string
       add :email, :string
       add :password, :string
-      add :role, :string
-
+      add :role, :string, default: "user"
+      add :team, references(:teams, on_delete: :delete_all, type: :binary_id)
       timestamps()
     end
-
+    create unique_index(:users, [:username])
+    create unique_index(:users, [:email])
   end
 end

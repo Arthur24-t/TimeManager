@@ -1,5 +1,7 @@
 <template>
-    <Bar :data="chartData" :options="chartOptions" />
+    <div class="chart">
+        <Bar :data="chartData" :options="chartOptions" />
+    </div>
 </template>
   
 <script>
@@ -22,6 +24,7 @@ export default {
     data() {
         return {
             userId: localStorage.getItem('user'),
+            token: localStorage.getItem('token'),
             loaded: false,
             dataResponse: [],
             listData: [],
@@ -31,7 +34,7 @@ export default {
                 datasets: [
                     {
                         label: 'Weekly hours worked',
-                        backgroundColor: '#f87979',
+                        backgroundColor: ['#00a3e0', '#00a3e0', '#00a3e0', '#00a3e0', '#00a3e0'],
                         data: []
                     }
                 ]
@@ -39,22 +42,33 @@ export default {
             chartOptions: {
                 maintainAspectRatio: false,
                 responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Weekly Work Hours',
+                        color: '#000',
+                        font: {
+                            size: 18,
+                            weight: 'bold',
+                        },
+                    },
+                },
                 scales: {
                     x: {
                         title: {
                             display: true,
                             text: 'Days of the week',
-                        }
+                        },
                     },
                     y: {
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: 'Hours worked'
-                        }
-                    }
-                }
-            }
+                            text: 'Hours worked',
+                        },
+                    },
+                },
+            },
         };
     },
     methods: {
@@ -90,7 +104,7 @@ export default {
         getWorkingTimes() {
             this.loaded = false;
             const params = this.getCurrentWeek()
-            GET(ENDPOINTS.GET_ALL_TIME + this.userId, params)
+            GET(ENDPOINTS.GET_ALL_TIME + this.userId, this.token, params)
                 .then(response => {
                     this.dataResponse = response.data.data;
 
@@ -167,4 +181,25 @@ export default {
 };
 </script>
   
-<style scoped></style>
+<style scoped>
+.chart-container .chartjs-x-axis .chartjs-tick tspan {
+    font-family: 'Arial', sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+
+.chart-container .chartjs-y-axis .chartjs-tick tspan {
+    font-family: 'Arial', sans-serif;
+    font-size: 12px;
+}
+
+.chart {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-left: 15px;
+}
+</style>
+  

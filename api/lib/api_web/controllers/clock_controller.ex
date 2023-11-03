@@ -7,6 +7,12 @@ defmodule ApiWeb.ClockController do
   action_fallback ApiWeb.FallbackController
 
   def show(conn, %{"userID" => user_id}) when is_binary(user_id) do
+    current_user = conn.assigns[:current_user]
+    user = Accounts.get_user!(user_id)
+
+    if current_user.role in ["superadmin"] or
+         (current_user.role in ["admin"] and current_user.team == user.team) or
+         current_user.id == user.id do
     case Accounts.get_user(user_id) do
       nil ->
         conn
@@ -15,9 +21,20 @@ defmodule ApiWeb.ClockController do
         clocks = Accounts.list_user_clocks(user_id)
         render(conn, "index.json", clocks: clocks)
     end
+  else
+    conn
+    |> put_status(:forbidden)
+    |> render(ApiWeb.ErrorView, "403.json")
   end
+end
 
   def create(conn, %{"userID" => user_id, "clock" => clock_params}) when is_binary(user_id) do
+    current_user = conn.assigns[:current_user]
+    user = Accounts.get_user(user_id)
+
+    if current_user.role in ["superadmin"] or
+         (current_user.role in ["admin"] and current_user.team == user.team) or
+         current_user.id == user.id do
     case Accounts.get_user(user_id) do
       nil ->
         conn
@@ -35,5 +52,10 @@ defmodule ApiWeb.ClockController do
             |> render(ApiWeb.ChangesetView, "error.json", changeset: changeset)
         end
     end
+  else
+    conn
+    |> put_status(:forbidden)
+    |> render(ApiWeb.ErrorView, "403.json")
   end
+end
 end

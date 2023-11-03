@@ -2,7 +2,8 @@ export const ENDPOINTS = {
     //USER
     GET_USER_BY_EMAIL_USERNAME: '/api/users',
     GET_USER_BY_ID: '/api/users/', // + add userID
-    CREATE_USER: '/api/users',
+    CREATE_USER: '/register',
+    LOGIN_USER: '/login',
     MODIFY_USER: '/api/users/', // + add userID
     DELETE_USER: '/api/users/', // + add userID
     //WORKING TIME

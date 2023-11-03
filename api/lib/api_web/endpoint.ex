@@ -47,6 +47,6 @@ defmodule ApiWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
-  plug CORSPlug, origin: "*"
+  plug CORSPlug, origin: ["http://localhost:8080", "http://127.0.0.1:8080","http://timemanager.freeboxos.fr:8080"], credentials: true, max_age: 86400, headers: ["Content-Type", "Authorization", "X-Requested-With", "X-CSRF-Token"]
   plug ApiWeb.Router
 end

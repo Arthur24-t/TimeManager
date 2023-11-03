@@ -1,18 +1,16 @@
 <template>
   <!-- <router-view /> -->
-  <div v-if="!authentified" class="identification-view">
-    <identification @authentication="updateAuthentication(true)" />
+  <div class="square-left"></div>
+  <div v-if="isIdentificationPage" class="identification-view">
+    <identification />
   </div>
   <div v-else class="main-view">
-    <div class="left-view">
-      <div class="user-clock">
-        <user @authentication="updateAuthentication(false)" />
-        <clock-manager @needrefresh="updateNeedRefresh(true)" />
-      </div>
-      <working-times @needrefresh="updateNeedRefresh(false)" :need-refresh="needrefresh" />
+    <nav-bar />
+    <div class="right-view">
+      <router-view />
     </div>
-    <chart-manager />
   </div>
+  <div class="square-right"></div>
 </template>
 
 <script>
@@ -20,8 +18,9 @@ import Identification from './components/Identification.vue';
 import User from './components/User.vue';
 import WorkingTime from './components/WorkingTime.vue';
 import WorkingTimes from './components/WorkingTimes.vue';
-import ClockManager from './components/ClockManager.vue';
 import ChartManager from './components/ChartManager.vue';
+import NavBar from './components/NavBar.vue';
+import Home from './components/Home.vue';
 
 export default {
   name: 'App',
@@ -30,32 +29,49 @@ export default {
     User,
     WorkingTime,
     WorkingTimes,
-    ClockManager,
-    ChartManager
+    Home,
+    ChartManager,
+    NavBar
   },
   data() {
     return {
-      user_data: null,
-      authentified: false,
-      needrefresh: false
+      authentified: localStorage.getItem('token'),
     }
   },
-  methods: {
-    updateData(e) {
-      this.user_data = e.data;
-      if (this.user_data) this.updateAuthentication(true)
-    },
-    updateAuthentication(e) {
-      this.authentified = e
-    },
-    updateNeedRefresh(e) {
-      this.needrefresh = e
+  computed: {
+    isIdentificationPage() {
+      return (this.$route.path === '/identification' || localStorage.getItem("user") === null)
     }
   },
 }
 </script>
 
 <style>
+.square-left {
+  width: 750px;
+  height: 750px;
+  transform: rotate(-45deg);
+  flex-shrink: 0;
+  border-radius: 160px;
+  background: rgba(198, 224, 225, 0.50);
+  position: absolute;
+  z-index: -1;
+  top: -35%;
+  left: -10%;
+}
+.square-right {
+  width: 750px;
+  height: 750px;
+  transform: rotate(-45deg);
+  flex-shrink: 0;
+  border-radius: 160px;
+  background: rgba(145, 188, 194, 0.50);
+  position: absolute;
+  z-index: -1;
+  top: 45%;
+  left: 66%;
+}
+
 .identification-view {
   display: flex;
   align-items: center;
@@ -63,14 +79,12 @@ export default {
 }
 
 .main-view {
-  display: grid;
-  grid-template-columns: 40vw 55vw;
-  gap: 1.5rem;
+  display: flex;
+  gap: 3rem;
 }
 
-.left-view {
-  display: grid;
-  grid-template-rows: 45vh 50vh;
+.right-view {
+  width: 100%;
 }
 
 .card {
@@ -116,5 +130,23 @@ export default {
 :-webkit-scrollbar-thumb {
   background: grey;
   border-radius: 10px;
+}
+
+@media (max-width: 1250px) {
+    .right-view {
+      width: 85%;
+    }
+}
+
+@media (max-width: 1000px) {
+    .right-view {
+      width: 75%;
+    }
+}
+
+@media (max-width: 700px) {
+    .right-view {
+      width: 75%;
+    }
 }
 </style>

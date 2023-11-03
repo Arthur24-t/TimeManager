@@ -3,30 +3,21 @@
     <div class="card-header">
       <slot name="header">Clock Manager</slot>
     </div>
-    <div class="card-body clock-manager-text">
-      <div v-if="clockIn">
-        <p>Work period in Progress</p>
-        <img src="../assets/horloge.gif" alt="horloge" width="100" />
-        <p>Elapsed Time: {{ formatTime(elapsedTime) }}</p>
-        <button @click="stopClock">Clock Out</button>
-      </div>
-      <div v-else>
-        <p>No work period in progress</p>
-        <p>Elapsed Time: {{ formatTime(elapsedTime) }}</p>
-        <button @click="startClock">Clock In</button>
-      </div>
-    </div>
+    <flip-clock ref="flipClock"/>
   </div>
 </template>
 
 <script>
-import { POST } from "../api/axios"
-import { ENDPOINTS } from "../api/endpoints"
+import FlipClock from "./FlipClock.vue"
 export default {
   name: 'ClockManager',
+  components: {
+    FlipClock,
+  },
   data() {
     return {
       userID: localStorage.getItem('user'),
+      token: localStorage.getItem('token'),
       startDateTime: null,
       stopDateTime: null,
       clockIn: false,
@@ -36,52 +27,22 @@ export default {
   },
   methods: {
     startClock() {
-      const data = {
-        clock: {
-          time: new Date(),
-          status: true,
-        }
-      };
-      POST(ENDPOINTS.CREATE_CLOCK + this.userID, data)
-        .then((response) => { console.dir("Created Start clock") })
-        .catch((error) => { console.dir(error) });
-      this.startDateTime = new Date();
-      this.clockIn = true;
-      this.timer = setInterval(() => {
-        this.elapsedTime++;
-      }, 1000);
-    },
-    stopClock() {
-      this.stopDateTime = new Date();
-      clearInterval(this.timer);
-      const dataClock = {
-        clock: {
-          time: this.stopDateTime,
-          status: false,
-        }
-      };
-      const dataTime = {
-        working_time: {
-          start: this.startDateTime,
-          end: this.stopDateTime,
-        }
-      };
-      POST(ENDPOINTS.CREATE_CLOCK + this.userID, dataClock)
-        .then((response) => { console.dir("Created Stop clock") })
-        .catch((error) => { console.dir(error) });
-
-      POST(ENDPOINTS.CREATE_TIME + this.userID, dataTime)
-        .then((response) => { console.dir("Created working time") })
-        .catch((error) => { console.dir(error) });
-      this.startDateTime = null;
-      this.clockIn = false;
-      this.elapsedTime = 0;
-      this.$emit('needrefresh')
-    },
+            this.$refs.flipClock.startClock();
+        },
+        stopClock() {
+            this.$refs.flipClock.stopClock();
+        },
     formatTime(seconds) {
+      const hours = Math.floor(seconds / 3600);
       const mins = Math.floor(seconds / 60);
       const secs = seconds % 60;
-      return `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
+      this.finalTime = {
+        hours : hours,
+        minutes : mins,
+        secondes : secs,
+
+      }
+      //return `${hours < 24 ? '0' : ''}${hours}:${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
     },
   },
   beforeDestroy() {
@@ -91,6 +52,36 @@ export default {
 </script>
 
 <style scoped>
+.flip-container {
+  perspective: 1000px;
+  display: inline-block;
+  margin: 5px;
+}
+
+.flip {
+  position: relative;
+  width: 40px;
+  height: 30px;
+  text-align: center;
+  transition: transform 0.5s;
+  transform-style: preserve-3d;
+}
+
+.flip div {
+  backface-visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flip .back {
+  transform: rotateX(-180deg);
+}
 .clock-manager-text {
   display: flex;
   flex-direction: column;
@@ -119,5 +110,35 @@ button {
 
 button:hover {
   background-color: #504ba9;
+}
+
+.flip-container {
+  perspective: 1000px;
+  display: inline-block;
+}
+
+.flip {
+  position: relative;
+  width: 120px;
+  height: 30px;
+  text-align: center;
+  transition: transform 0.5s;
+  transform-style: preserve-3d;
+}
+
+.flip div {
+  backface-visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flip .back {
+  transform: rotateX(-180deg);
 }
 </style>

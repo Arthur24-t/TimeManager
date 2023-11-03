@@ -4,7 +4,6 @@ defmodule Api.Accounts do
   """
 
   import Ecto.Query, warn: false
-  import Bcrypt
   alias Api.Repo
 
   alias Api.Accounts.User
@@ -20,6 +19,7 @@ defmodule Api.Accounts do
   """
   def list_users do
     Repo.all(User)
+    |> Repo.preload(:teams)
   end
 
   @doc """
@@ -44,7 +44,11 @@ defmodule Api.Accounts do
     Repo.one(query)
   end
 
-  def get_user!(id), do: Repo.get!(User, id)
+  def get_user!(id) do
+    Repo.get!(User, id)
+    |> Repo.preload(:teams)
+  end
+
 
   @doc """
   Creates a user.
@@ -61,20 +65,29 @@ defmodule Api.Accounts do
   def create_user(attrs \\ %{}) do
     %User{}
     |> User.changeset(attrs)
+    |> Ecto.Changeset.update_change(:password, &hash_password/1)
     |> Repo.insert()
   end
 
-    def authenticate(email, password) do
-    case Repo.get_by(User, email: email) do
+  def authenticate(email, password) do
+    query = from u in User, where: u.email == ^email
+
+    case Repo.one(query) do
       nil ->
-        {:error, "User not found"}
+        Bcrypt.no_user_verify()
+        {:error, :invalid_credentials}
+
       user ->
-        if password == user.password do
+        if Bcrypt.verify_pass(password, user.password) do
           {:ok, user}
         else
-          {:error, "Invalid password"}
+          {:error, :invalid_credentials}
         end
     end
+  end
+
+  defp hash_password(password) do
+    Bcrypt.hash_pwd_salt(password)
   end
   @doc """
   Updates a user.
@@ -343,6 +356,69 @@ defmodule Api.Accounts do
     query = from(wt in WorkingTime, where: wt.user == ^userID and wt.id == ^id, select: wt)
     Repo.all(query)
   end
+
+  alias Api.Accounts.Team
+
+
+  def list_teams do
+    Repo.all(Team)
+  end
+
+
+  def get_team!(id), do: Repo.get!(Team, id)
+
+
+  def create_team(attrs \\ %{}) do
+    %Team{}
+    |> Team.changeset(attrs)
+    |> Repo.insert()
+  end
+
+
+  def update_team(%Team{} = team, attrs) do
+    team
+    |> Team.changeset(attrs)
+    |> Repo.update()
+  end
+
+
+  def delete_team(%Team{} = team) do
+    Repo.delete(team)
+  end
+
+
+  def change_team(%Team{} = team, attrs \\ %{}) do
+    Team.changeset(team, attrs)
+  end
+
+  def add_team_to_user(user_id, team_id) do
+    user = Repo.get!(User, user_id)
+    user = Repo.preload(user, :teams)
+    team = Repo.get!(Team, team_id)
+
+    changeset =
+      user
+      |> Ecto.Changeset.change()
+      |> Ecto.Changeset.put_assoc(:teams, user.teams ++ [team])
+      |> Repo.update()
+
+  end
+
+  def remove_team_from_user(user_id, team_id) do
+    user = Repo.get!(User, user_id)
+    user = Repo.preload(user, :teams)
+    team = Repo.get!(Team, team_id)
+
+    user
+    |> Ecto.Changeset.put_assoc(:teams, user.teams -- [team])
+    |> Repo.update()
+  end
+
+  def get_team_with_users(team_id) do
+    Repo.get(Team, team_id)
+    |> Repo.preload(:users)
+  end
+
 
 
 end
