@@ -36,7 +36,7 @@
 import { POST } from "../api/axios"
 import { ENDPOINTS } from "../api/endpoints"
 import { createToast } from 'mosha-vue-toastify';
-
+import CryptoJS from 'crypto-js';
 export default {
     name: 'Identification',
     data() {
@@ -50,11 +50,15 @@ export default {
         };
     },
     methods: {
+        hashPassword(password) {
+            return CryptoJS.SHA256(password).toString();
+        },
         login() {
+            const hashedPassword = this.hashPassword(this.formData.password);
             const user = {
                 user: {
                     email: this.formData.email,
-                    password: this.formData.password
+                    password: hashedPassword
                 }
             }
             POST(ENDPOINTS.LOGIN_USER, user)
@@ -69,11 +73,12 @@ export default {
                 })
         },
         createUser() {
+            const hashedPassword = this.hashPassword(this.formData.password);
             const data = {
                 user: {
                     username: this.formData.username,
                     email: this.formData.email,
-                    password: this.formData.password,
+                    password: hashedPassword,
                     role: 'user'
                 }
             }
