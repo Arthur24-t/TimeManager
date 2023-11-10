@@ -10,7 +10,7 @@ defmodule Api.Accounts.User do
     field :email, :string
     field :password, :string
     field :role, :string, default: "user"
-    many_to_many :teams, Api.Accounts.Team, join_through: "users_teams"
+    many_to_many :teams, Api.Accounts.Team, join_through: "users_teams",on_replace: :delete
     timestamps()
   end
 

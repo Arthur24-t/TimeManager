@@ -9,8 +9,7 @@ defmodule ApiWeb.TeamController do
   def index(conn, _params) do
     current_user = conn.assigns[:current_user]
 
-    # Check if the current user has permission to view all teams
-    if current_user.role in ["admin","superadmin"] do
+    if current_user.role in ["superadmin"] do
       teams = Accounts.list_teams()
       render(conn, "index.json", teams: teams)
     else
@@ -105,6 +104,7 @@ defmodule ApiWeb.TeamController do
   end
 
   def get_users_of_team(conn, %{"team_id" => team_id}) do
+
     case Accounts.get_team_with_users(team_id) do
       nil ->
         conn
@@ -113,5 +113,23 @@ defmodule ApiWeb.TeamController do
         render(conn, "users.json", users: team.users)
     end
 
+  end
+  defp allowed_to_access?(current_user, user) do
+    current_user.role in ["superadmin"] or
+      (current_user.role in ["admin"] and in_same_team?(current_user, user)) or
+      current_user.id == user.id
+  end
+
+  def in_same_team?(user1, user2) do
+    # Préchargez les équipes pour chaque utilisateur si elles ne sont pas déjà préchargées
+    user1 = Repo.preload(user1, :teams)
+    user2 = Repo.preload(user2, :teams)
+
+    # Récupérez les ID des équipes pour les deux utilisateurs
+    team_ids1 = Enum.map(user1.teams, & &1.id)
+    team_ids2 = Enum.map(user2.teams, & &1.id)
+
+    # Vérifiez si il y a un chevauchement dans les ID des équipes
+    Enum.any?(team_ids1, fn id -> id in team_ids2 end)
   end
 end

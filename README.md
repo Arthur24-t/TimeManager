@@ -20,6 +20,8 @@ Piscine Msc1 project, Creation of a TimeManager application.
 
     - Each of these services is containerized using Docker and orchestrated with Docker Compose for easy deployment and management.
 
+    - We also have a mobile application that is simpler than the web interface, allowing users to carry out various actions
+
 ## Table of Content
 
  - [Collaborator](#collaborator)
@@ -44,6 +46,8 @@ Piscine Msc1 project, Creation of a TimeManager application.
 ## Technical Stack
 - Front-End
   - [Vue.js (vue3)](https://github.com/vuejs)
+- Mobile
+  - [Flutter (3.13.9)](https://github.com/flutter)
 - Back-End
   - [Elixir](https://github.com/elixir-lang/elixir)
   - [Phoenix Framework](https://github.com/phoenixframework/phoenix)
@@ -91,6 +95,10 @@ See the associated TEMPLATES in your [Figma](https://www.figma.com/file/kXZAlkdy
 
 ## Theme 5 : Authentification
 
+See the associated README.md in the directory [API](./api/README.md#routes)
+
 ## Theme 6 : Mobile
+
+See the associated README.md in the directory [Front-Mobile](./front-mobile/time_manager_mobile/README.md)
 
 ## Theme 7 : Security

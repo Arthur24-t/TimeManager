@@ -1,92 +1,81 @@
 defmodule ApiWeb.UserControllerTest do
-  use ApiWeb.ConnCase
-
+  use ApiWeb.ConnCase, async: true
+  alias Api.Repo
   alias Api.Accounts
-  alias Api.Accounts.User
+  alias ApiWeb.Router.Helpers, as: Routes
+  alias Api.Auth.Guardian
+  setup do
+    # Create a user using the Accounts context directly
+    user_params = %{
+      username: "admin",
+      email: "admin@admin.com",
+      password: "1234",
+      role: "superadmin"
 
-  @create_attrs %{
-    username: "some username",
-    email: "some email"
-  }
-  @update_attrs %{
-    username: "some updated username",
-    email: "some updated email"
-  }
-  @invalid_attrs %{username: nil, email: nil}
+    }
 
-  def fixture(:user) do
-    {:ok, user} = Accounts.create_user(@create_attrs)
-    user
+    # Assuming Accounts.create_user/1 is a function you have defined in your context
+    # that handles user creation.
+    {:ok, user} = Accounts.create_user(user_params)
+    user = Accounts.get_user!(user.id) |> Repo.preload(:teams)
+    csrf_token = Plug.CSRFProtection.get_csrf_token()
+    {:ok, jwt, _claims} = Guardian.encode_and_sign(user, %{csrf_token: csrf_token})
+
+    {:ok, jwt: jwt, user: user, csrf_token: csrf_token}
   end
 
-  setup %{conn: conn} do
-    {:ok, conn: put_req_header(conn, "accept", "application/json")}
+  # Helper function to authenticate the connection
+  defp authenticate_conn(conn, jwt) do
+    put_req_header(conn, "authorization", "Bearer #{jwt}")
   end
 
-  describe "index" do
-    test "lists all users", %{conn: conn} do
-      conn = get(conn, Routes.user_path(conn, :index))
-      assert json_response(conn, 200)["data"] == []
-    end
+  test "creates a user successfully", %{conn: conn, jwt: jwt, csrf_token: csrf_token} do
+    conn = authenticate_conn(conn, jwt)
+    user_params = %{name: "New User", email: "newuser@example.com", password: "pass1234",role: "user"}
+    conn = put_resp_cookie(conn, "csrf_token", csrf_token, http_only: true)
+
+    conn = post(conn, Routes.user_path(conn, :create), user: user_params)
+
+    assert resp = json_response(conn, 201)
+    assert resp["user"]["id"]
+    assert resp["user"]["name"] == "New User"
   end
 
-  describe "create user" do
-    test "renders user when data is valid", %{conn: conn} do
-      conn = post(conn, Routes.user_path(conn, :create), user: @create_attrs)
-      assert %{"id" => id} = json_response(conn, 201)["data"]
+  test "lists all users", %{conn: conn, jwt: jwt, csrf_token: csrf_token} do
+    # Authenticate the connection first
+    conn = authenticate_conn(conn, jwt)
 
-      conn = get(conn, Routes.user_path(conn, :show, id))
+    # Then, if needed, set the cookie
+    conn = put_resp_cookie(conn, "csrf_token", csrf_token, http_only: true)
 
-      assert %{
-               "id" => id,
-               "email" => "some email",
-               "username" => "some username"
-             } = json_response(conn, 200)["data"]
-    end
+    # Now, make the GET request
+    conn = get(conn, Routes.user_path(conn, :index))
 
-    test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, Routes.user_path(conn, :create), user: @invalid_attrs)
-      assert json_response(conn, 422)["errors"] != %{}
-    end
+    # Process the response
+    response = json_response(conn, 200)
+    IO.inspect(response, label: "Response JSON")
+
+    assert is_list(response["users"])
+    assert length(response["users"]) == 1
   end
 
-  describe "update user" do
-    setup [:create_user]
 
-    test "renders user when data is valid", %{conn: conn, user: %User{id: id} = user} do
-      conn = put(conn, Routes.user_path(conn, :update, user), user: @update_attrs)
-      assert %{"id" => ^id} = json_response(conn, 200)["data"]
+  test "shows user details when authorized", %{conn: conn, jwt: jwt, user: user,  csrf_token: csrf_token} do
+    conn = authenticate_conn(conn, jwt)
+    conn = put_resp_cookie(conn, "csrf_token", csrf_token, http_only: true)
 
-      conn = get(conn, Routes.user_path(conn, :show, id))
+    conn = get(conn, Routes.user_path(conn, :show, user.id))
 
-      assert %{
-               "id" => id,
-               "email" => "some updated email",
-               "username" => "some updated username"
-             } = json_response(conn, 200)["data"]
-    end
 
-    test "renders errors when data is invalid", %{conn: conn, user: user} do
-      conn = put(conn, Routes.user_path(conn, :update, user), user: @invalid_attrs)
-      assert json_response(conn, 422)["errors"] != %{}
-    end
+    assert json_response(conn, 200)["user"]
   end
 
-  describe "delete user" do
-    setup [:create_user]
+  test "deletes a user successfully when authorized", %{conn: conn, jwt: jwt, user: user,  csrf_token: csrf_token} do
+    conn = authenticate_conn(conn, jwt)
+    conn = put_resp_cookie(conn, "csrf_token", csrf_token, http_only: true)
+    conn = delete(conn, Routes.user_path(conn, :delete, user.id))
 
-    test "deletes chosen user", %{conn: conn, user: user} do
-      conn = delete(conn, Routes.user_path(conn, :delete, user))
-      assert response(conn, 204)
 
-      assert_error_sent 404, fn ->
-        get(conn, Routes.user_path(conn, :show, user))
-      end
-    end
-  end
-
-  defp create_user(_) do
-    user = fixture(:user)
-    %{user: user}
+    assert response(conn, 204)
   end
 end

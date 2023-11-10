@@ -30,6 +30,7 @@
 
     #route user
     resources "/users", UserController
+    delete "/users/:user_id", UserController, :delete
     post "/users/:user_id/teams/:team_id", UserController, :add_team_to_user
     delete "/users/:user_id/teams/:team_id", UserController, :remove_team_from_user
 

@@ -18,6 +18,7 @@ Piscine Msc1 project, Creation of a TimeManager application.
 
 ## Table of Content
 
+- [Database Architecture](#database-architecture)
 - [Routes](#routes)
   - [Authentication](#authentication)
   - [User](#user-protected)
@@ -26,17 +27,23 @@ Piscine Msc1 project, Creation of a TimeManager application.
 - [Installation & Start Up](#installation--start-up)
 - [Learn More](#learn-more)
 
+## Database Architecture
+
+You can see the MCD of the database here: [MCD](../doc/MCD_TimeManager.pdf)
+
 ## Routes
 
 - All the routes, except for `/login` and `/register`, are **protected** and require a valid **JWT token**.
 - [Authentication](#authentication)
 - [User](#user-protected)
-- [WorkingTime](#working-times-protected)
 - [Clock](#clocks-protected)
+- [WorkingTime](#working-times-protected)
+- [Teams](#teams-protected)
 
 ### Authentication
-- **POST /login**: Authenticates a user and returns a JWT token.
-  Request body should be in the following format:
+- **<font style="color:orange">POST</font> /login**
+  - Authenticates a user and returns a JWT token.
+  - Request body should be in the following format:
   ```json
   {
     "user": {
@@ -45,23 +52,30 @@ Piscine Msc1 project, Creation of a TimeManager application.
     }
   }
   ```
-- **POST /register**: Registers a new user.
-  Request body should be in the following format:
+- **<font style="color:orange">POST</font> /register**
+  - Registers a new user.
+  - Request body should be in the following format:
   ```json
   {
     "user": {
       "username": "exemple",
       "email": "exemple@exemple.com",
       "password": "exemple123",
+      "role": "user",
     }
   }
   ```
 
 ### User (Protected)
-- **GET /api/users**: Retrieves a list of users based on optional email and username filters.
-- **GET /api/users/:userID**: Retrieves the details of a specific user by their ID.
-- **POST /api/users**: Creates a new user.  
-  Request body should be in the following format:
+- **<font style="color:green">GET</font> /api/users**
+  - Retrieves a list of all users in the database
+- **<font style="color:green">GET</font> /api/users?username=&email=** 
+  - Retrieves a list of users based on optional email and username filters.
+- **<font style="color:green">GET</font> /api/users/:userID**
+  - Retrieves the details of a specific user by their ID.
+- **<font style="color:orange">POST</font> /api/users**
+  - Creates a new user. 
+  - Request body should be in the following format:
   ```json
   {
     "user": {
@@ -70,8 +84,12 @@ Piscine Msc1 project, Creation of a TimeManager application.
     }
   }
   ```
-- **PUT /api/users/:userID**: Updates the details of a specific user by their ID.
-Request body should be in the following format:
+- **<font style="color:orange">POST</font> /api/users/:userID/teams/:teamID** 
+  - Add the specific user to the specific team. 
+  - No body is required.
+- **<font style="color:blue">PUT</font> /api/users/:userID**
+  - Updates the details of a specific user by their ID.
+  - Request body should be in the following format:
   ```json
   {
     "user": {
@@ -81,37 +99,17 @@ Request body should be in the following format:
     }
   }
   ```
-- **DELETE /api/users/:userID**: Deletes a specific user by their ID.
-
-### Working Times (Protected)
-- **GET /api/workingtimes/:userID**: Retrieves all working time entries for a specific user within an optional date range.
-- **GET /api/workingtimes/:userID/:id**: Retrieves a specific working time entry by its ID for a specific user.
-- **POST /api/workingtimes/:userID**: Creates a new working time entry for a specific user.  
-  Request body should be in the following format:
-  ```json
-  {
-      "working_time": {
-          "start": "2023-07-01 12:12:12",
-          "end": "2023-07-12 19:12:12"
-      } 
-  }
-  ```
-- **PUT /api/workingtimes/:id**: Updates a specific working time entry by its ID.
-Request body should be in the following format:
-  ```json
-  {
-      "working_time": {
-          "start": "2023-07-01 12:12:12",
-          "end": "2023-07-12 19:12:12"
-      } 
-  }
-  ```
-- **DELETE /api/workingtimes/:id**: Deletes a specific working time entry by its ID.
+- **<font style="color:red">DELETE</font> /api/users/:userID**
+  - Deletes a specific user by their ID.
+- **<font style="color:red">DELETE</font> /api/users/:userID/teams/:teamID**
+  - Deletes a specific user from a specific team by userID and teamID
 
 ### Clocks (Protected)
-- **GET /api/clocks/:userID**: Retrieves all clocking events for a specific user.
-- **POST /api/clocks/:userID**: Creates a new clocking event for a specific user.  
-  Request body should be in the following format:
+- **<font style="color:green">GET</font> /api/clocks/:userID**
+  - Retrieves all clocking events for a specific user.
+- **<font style="color:orange">POST</font> /api/clocks/:userID**
+  - Creates a new clocking event for a specific user.  
+  - Request body should be in the following format:
   ```json
   {
     "clock": {
@@ -120,6 +118,64 @@ Request body should be in the following format:
     }
   }
   ```
+
+### Working Times (Protected)
+- **<font style="color:green">GET</font> /api/workingtimes/:userID**
+  - Retrieves all working time entries for a specific user within an optional date range.
+- **<font style="color:green">GET</font> /api/workingtimes/:userID/:id**
+  - Retrieves a specific working time entry by its ID for a specific user.
+- **<font style="color:orange">POST</font> /api/workingtimes/:userID**
+  - Creates a new working time entry for a specific user.  
+  - Request body should be in the following format:
+  ```json
+  {
+      "working_time": {
+          "start": "2023-07-01 12:12:12",
+          "end": "2023-07-12 19:12:12"
+      } 
+  }
+  ```
+- **<font style="color:blue">PUT</font> /api/workingtimes/:id**
+  - Updates a specific working time entry by its ID.
+  - Request body should be in the following format:
+  ```json
+  {
+      "working_time": {
+          "start": "2023-07-01 12:12:12",
+          "end": "2023-07-12 19:12:12"
+      } 
+  }
+  ```
+- **<font style="color:red">DELETE</font> /api/workingtimes/:id**
+  - Deletes a specific working time entry by its ID.
+
+### Teams (Protected)
+- **<font style="color:green">GET</font> /api/teams**
+  - Retrieves a list of all teams in the database
+- **<font style="color:green">GET</font> /api/teams/:id**
+  - Retrieves a list of all user in a specific team
+- **<font style="color:orange">POST</font> /api/teams**
+  - Create a new team
+  - Request body should be in the following format:
+  ```json
+  {
+      "team": {
+          "name": "teamname"
+      }
+  }
+  ```
+- **<font style="color:blue">PUT</font> /api/teams/:id**
+  - Update the name of a specific team by its ID
+  - Request body should be in the following format:
+  ```json
+  {
+      "team": {
+          "name": "teamname"
+      }
+  }
+  ```
+- **<font style="color:red">DELETE</font> /api/teams/:id**
+  -  Delete a specific team by its ID
 
 ## Installation & Start Up
 

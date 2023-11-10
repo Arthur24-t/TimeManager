@@ -11,7 +11,16 @@ defmodule Api.Auth.CSRFCheck do
     jwt = get_req_header(conn, "authorization")
           |> List.first()
           |> extract_jwt()
+          jwt = get_req_header(conn, "authorization")
+          |> List.first()
+          |> extract_jwt()
 
+    # Handle case when JWT is nil
+    if jwt == nil do
+      conn
+      |> send_resp(403, "Authorization header not found.")
+      |> halt()
+    end
     # Fetch the cookies
     cookies = conn
               |> fetch_cookies()

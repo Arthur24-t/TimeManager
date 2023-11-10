@@ -15,22 +15,12 @@
 
 <script>
 import Identification from './components/Identification.vue';
-import User from './components/User.vue';
-import WorkingTime from './components/WorkingTime.vue';
-import WorkingTimes from './components/WorkingTimes.vue';
-import ChartManager from './components/ChartManager.vue';
 import NavBar from './components/NavBar.vue';
-import Home from './components/Home.vue';
 
 export default {
   name: 'App',
   components: {
     Identification,
-    User,
-    WorkingTime,
-    WorkingTimes,
-    Home,
-    ChartManager,
     NavBar
   },
   data() {
@@ -54,7 +44,7 @@ export default {
   flex-shrink: 0;
   border-radius: 160px;
   background: rgba(198, 224, 225, 0.50);
-  position: absolute;
+  position: fixed;
   z-index: -1;
   top: -35%;
   left: -10%;
@@ -66,7 +56,7 @@ export default {
   flex-shrink: 0;
   border-radius: 160px;
   background: rgba(145, 188, 194, 0.50);
-  position: absolute;
+  position: fixed;
   z-index: -1;
   top: 45%;
   left: 66%;

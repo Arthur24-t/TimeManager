@@ -21,7 +21,7 @@
                 <input id="password" type="password" class="form-control" v-model="formData.user.password" />
                 <div v-if="passwordError" class="text-danger">Password is required</div>
             </div>
-            <button @click="togglePasswordVisibility" >{{ passwordVisible ? 'Hidden Password' : 'Change Password' }}</button>
+            <button @click="togglePasswordVisibility" class="btn btn-password" >{{ passwordVisible ? 'Hidden Password' : 'Change Password' }}</button>
             <div class="button-container">
                 <button @click="updatePassword" class="btn btn-info" v-if="passwordVisible">Update Password</button>
             </div>
@@ -152,6 +152,12 @@ export default {
     cursor: pointer;
 }
 
+.btn-password {
+    background-color: #3a669f;
+    border: 1px solid #3a669f;
+    color: white;
+}
+
 .btn-update {
     background-color: white;
     border: 1px solid #3a669f;
@@ -169,6 +175,11 @@ export default {
 .btn-info:hover {
     background-color: #32b966;
     color: white;
+}
+
+.btn-password:hover {
+    background-color: white;
+    color: #3a669f;
 }
 
 .btn-update:hover {

@@ -17,13 +17,13 @@ export default {
     name: 'BarChart',
     components: { Bar },
     props: {
-        needRefresh: {
-            type: Boolean,
+        userID: {
+            type: String,
         },
     },
     data() {
         return {
-            userId: localStorage.getItem('user'),
+            userId: this.userID || localStorage.getItem('user'),
             token: localStorage.getItem('token'),
             loaded: false,
             dataResponse: [],

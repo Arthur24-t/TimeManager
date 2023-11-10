@@ -405,13 +405,14 @@ defmodule Api.Accounts do
   end
 
   def remove_team_from_user(user_id, team_id) do
-    user = Repo.get!(User, user_id)
-    user = Repo.preload(user, :teams)
+    user = Repo.get!(User, user_id) |> Repo.preload(:teams)
     team = Repo.get!(Team, team_id)
 
-    user
-    |> Ecto.Changeset.put_assoc(:teams, user.teams -- [team])
-    |> Repo.update()
+    changeset =
+      user
+      |> Ecto.Changeset.change()
+      |> Ecto.Changeset.put_assoc(:teams, user.teams -- [team])
+      |> Repo.update()
   end
 
   def get_team_with_users(team_id) do

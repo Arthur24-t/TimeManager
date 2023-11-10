@@ -18,14 +18,14 @@
       Pie
     },
     props: {
-      needRefresh: {
+      userID: {
         type: Boolean,
       },
     },
     data() {
       return {
-        userId: localStorage.getItem('user'),
-            token: localStorage.getItem('token'),
+        userId: this.userID || localStorage.getItem('user'),
+        token: localStorage.getItem('token'),
         chartData: {
           labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
           datasets: [

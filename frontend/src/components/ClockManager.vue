@@ -97,7 +97,7 @@ export default {
   border-radius: 4px;
 }
 
-button {
+.button {
   margin-top: 20px;
   padding: 10px 20px;
   font-size: 18px;
@@ -108,7 +108,7 @@ button {
   cursor: pointer;
 }
 
-button:hover {
+.button:hover {
   background-color: #504ba9;
 }
 

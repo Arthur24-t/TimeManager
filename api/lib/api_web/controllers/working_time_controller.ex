@@ -3,6 +3,7 @@ defmodule ApiWeb.WorkingTimeController do
 
   alias Api.Accounts
   alias Api.Accounts.WorkingTime
+  alias Api.Repo
 
   action_fallback(ApiWeb.FallbackController)
 
@@ -11,9 +12,7 @@ defmodule ApiWeb.WorkingTimeController do
     current_user = conn.assigns[:current_user]
     user = Accounts.get_user!(user_id)
 
-    if current_user.role in ["superadmin"] or
-         (current_user.role in ["admin"] and current_user.team == user.team) or
-         current_user.id == user.id do
+    if allowed_to_access?(current_user, user) do
       working_times =
         Accounts.find_working_times_by_user_and_date_range(user_id, start_date, end_date)
 
@@ -29,9 +28,7 @@ defmodule ApiWeb.WorkingTimeController do
     current_user = conn.assigns[:current_user]
     user = Accounts.get_user!(user_id)
 
-    if current_user.role in ["superadmin"] or
-         (current_user.role in ["admin"] and current_user.team == user.team) or
-         current_user.id == user.id do
+    if allowed_to_access?(current_user, user) do
       with %WorkingTime{} = working_time <- Accounts.get_working_time(user_id, id) do
         render(conn, "show.json", working_time: working_time)
       else
@@ -50,9 +47,7 @@ defmodule ApiWeb.WorkingTimeController do
     current_user = conn.assigns[:current_user]
     user = Accounts.get_user!(user_id)
 
-    if current_user.role in ["superadmin"] or
-         (current_user.role in ["admin"] and current_user.team == user.team) or
-         current_user.id == user.id do
+    if allowed_to_access?(current_user, user) do
       case Accounts.create_working_time(Map.merge(%{"user" => user_id}, working_time_params)) do
         {:ok, %WorkingTime{} = working_time} ->
           conn
@@ -79,9 +74,8 @@ defmodule ApiWeb.WorkingTimeController do
     current_user = conn.assigns[:current_user]
     working_time = Accounts.get_working_time!(id)
     user = Accounts.get_user!(working_time.user)
-    if current_user.role in ["superadmin"] or
-         (current_user.role in ["admin"] and current_user.team == user.team) or
-         current_user.id == user.id do
+
+    if allowed_to_access?(current_user, user) do
       case Accounts.get_working_time!(id) do
         %WorkingTime{} = working_time ->
           case Accounts.update_working_time(working_time, working_time_params) do
@@ -114,9 +108,7 @@ defmodule ApiWeb.WorkingTimeController do
     working_time = Accounts.get_working_time!(id)
     user = Accounts.get_user!(working_time.user)
 
-    if current_user.role in ["superadmin"] or
-         (current_user.role in ["admin"] and current_user.team == user.team) or
-         current_user.id == user.id do
+    if allowed_to_access?(current_user, user) do
       case Accounts.get_working_time!(id) do
         %WorkingTime{} = working_time ->
           case Accounts.delete_working_time(working_time) do
@@ -138,5 +130,24 @@ defmodule ApiWeb.WorkingTimeController do
       |> put_status(:forbidden)
       |> render(ApiWeb.ErrorView, "403.json")
     end
+  end
+
+  defp allowed_to_access?(current_user, user) do
+    current_user.role in ["superadmin"] or
+      (current_user.role in ["admin"] and in_same_team?(current_user, user)) or
+      current_user.id == user.id
+  end
+
+  def in_same_team?(user1, user2) do
+    # Préchargez les équipes pour chaque utilisateur si elles ne sont pas déjà préchargées
+    user1 = Repo.preload(user1, :teams)
+    user2 = Repo.preload(user2, :teams)
+
+    # Récupérez les ID des équipes pour les deux utilisateurs
+    team_ids1 = Enum.map(user1.teams, & &1.id)
+    team_ids2 = Enum.map(user2.teams, & &1.id)
+
+    # Vérifiez si il y a un chevauchement dans les ID des équipes
+    Enum.any?(team_ids1, fn id -> id in team_ids2 end)
   end
 end

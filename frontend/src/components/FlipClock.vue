@@ -63,13 +63,13 @@
         </div>
     </div>
     <div class="row-button">
-        <button v-if="!clockIn" @click="startClock">Start</button>
+        <button v-if="!clockIn" @click="startClock(true)">Start</button>
         <button v-else @click="stopClock">Stop</button>
     </div>
 </template>
   
 <script>
-import { POST } from "../api/axios"
+import { GET, POST } from "../api/axios"
 import { ENDPOINTS } from "../api/endpoints"
 export default {
     name: "FlipClock",
@@ -86,6 +86,8 @@ export default {
             startDateTime: null,
             stopDateTime: null,
             clockIn: false,
+            elapsedTimeEnabled: false,
+            diff: 0,
             elapsedTime: 0,
             timer: null,
             curTime: new Date(0),
@@ -96,9 +98,39 @@ export default {
             ],
         };
     },
+    created() {
+        let responseData = [];
+        GET(ENDPOINTS.GET_CLOCK + this.userID, this.token)
+            .then(response => {
+                responseData = response.data.data;
+                const data = responseData.slice(-1);
+                if (data[0].status) {
+                    this.clockIn = data[0].status;
+                    if (this.clockIn) {
+                        this.startDateTime = new Date(data[0].time);
+                        this.startDateTime.setHours(this.startDateTime.getHours() + 1)
+                        console.dir(this.startDateTime)
+                        const currentDateTime = new Date();
+                        const diff = Math.floor((currentDateTime - this.startDateTime) / 1000);
+
+                        this.realClock[0].current = Math.floor(diff / 3600);
+                        this.realClock[1].current = Math.floor((diff % 3600) / 60);
+                        this.realClock[2].current = diff % 60;
+                        this.startClock(false)
+                    }
+
+                }
+            })
+            .catch((error) => { console.dir(error) });
+    },
     computed: {
         computedRealClock() {
-            const { realClock } = this;
+            const { realClock, elapsedTimeEnabled } = this;
+            const currentDateTime = new Date();
+            if (elapsedTimeEnabled && this.startDateTime) {
+                this.diff = Math.floor((currentDateTime - this.startDateTime) / 1000);
+            }
+
             return realClock.map((clock) => ({
                 ...clock,
                 nextFormat: `0${clock.current + 1 > clock.max ? 0 : clock.current + 1}`,
@@ -112,45 +144,55 @@ export default {
         },
     },
     methods: {
-        startClock() {
-            const data = {
-                clock: {
-                    time: new Date(),
-                    status: true,
-                }
-            };
-            POST(ENDPOINTS.CREATE_CLOCK + this.userID, data, this.token)
-                .then((response) => { console.dir("Created Start clock") })
-                .catch((error) => { console.dir(error) });
-
-            this.startDateTime = new Date();
+        startClock(newDate) {
             this.clockIn = true;
-            let currentTime = new Date(0);
-            currentTime.setHours(0);
-            currentTime.setMinutes(0);
-            currentTime.setSeconds(0);
-            
-            this.timer = setInterval(() => {
-                currentTime.setSeconds(currentTime.getSeconds() + 1);
-                const hours = currentTime.getHours();
-                const minutes = currentTime.getMinutes();
-                const seconds = currentTime.getSeconds();
+            this.elapsedTimeEnabled = true;
+            let currentTime = new Date(this.startDateTime);
+            if (newDate) {
+                this.startDateTime = new Date();
+                const data = {
+                    clock: {
+                        time: new Date(),
+                        status: true,
+                    }
+                };
+                POST(ENDPOINTS.CREATE_CLOCK + this.userID, data, this.token)
+                    .then((response) => { console.dir("Created Start clock") })
+                    .catch((error) => { console.dir(error) });
+                currentTime.setHours(0);
+                currentTime.setMinutes(0);
+                currentTime.setSeconds(0);
+            }
 
-                if (hours !== this.realClock[0].current) {
-                    this.realClock[0].current = hours;
-                    this.flip(hours, 0);
-                }
+            else if (!newDate) {
+                currentTime.setHours(this.realClock[0].current);
+                currentTime.setMinutes(this.realClock[1].current);
+                currentTime.setSeconds(this.realClock[2].current);
+            }
 
-                if (minutes !== this.realClock[1].current) {
-                    this.realClock[1].current = minutes;
-                    this.flip(minutes, 1);
-                }
+            if (this.clockIn) {
+                this.timer = setInterval(() => {
+                    currentTime.setSeconds(currentTime.getSeconds() + 1);
+                    const hours = currentTime.getHours();
+                    const minutes = currentTime.getMinutes();
+                    const seconds = currentTime.getSeconds();
 
-                if (seconds !== this.realClock[2].current) {
-                    this.realClock[2].current = seconds - 1;
-                    this.flip(seconds, 2);
-                }
-            }, 1000);
+                    if (hours !== this.realClock[0].current) {
+                        this.realClock[0].current = hours;
+                        this.flip(hours, 0);
+                    }
+
+                    if (minutes !== this.realClock[1].current) {
+                        this.realClock[1].current = minutes;
+                        this.flip(minutes, 1);
+                    }
+
+                    if (seconds !== this.realClock[2].current) {
+                        this.realClock[2].current = seconds - 1;
+                        this.flip(seconds, 2);
+                    }
+                }, 1000);
+            }
         },
         stopClock() {
             this.stopDateTime = new Date();
@@ -167,6 +209,7 @@ export default {
                     end: this.stopDateTime,
                 }
             };
+
             POST(ENDPOINTS.CREATE_CLOCK + this.userID, dataClock, this.token)
                 .then((response) => { console.dir("Created Stop clock") })
                 .catch((error) => { console.dir(error) });
@@ -174,13 +217,14 @@ export default {
             POST(ENDPOINTS.CREATE_TIME + this.userID, dataTime, this.token)
                 .then((response) => { console.dir("Created working time") })
                 .catch((error) => { console.dir(error) });
+
             this.startDateTime = null;
             this.clockIn = false;
+            this.elapsedTimeEnabled = false;
             this.elapsedTime = 0;
             this.realClock[0].current = 0;
             this.realClock[1].current = 0;
             this.realClock[2].current = 0;
-            this.$emit('needrefresh')
         },
         formatTime(seconds) {
             const mins = Math.floor(seconds / 60);
@@ -200,30 +244,6 @@ export default {
                 clock.current = newVal;
             }
         },
-        // timeFlies() {
-        //     console.dir("hello");
-        //     this.timer = setInterval(() => {
-        //         const newTime = new Date();
-        //         const hours = newTime.getHours();
-        //         const minutes = newTime.getMinutes();
-        //         const seconds = newTime.getSeconds();
-
-        //         if (hours !== this.realClock[0].current) {
-        //             this.flip(hours, 0);
-        //             this.realClock[0].current = hours;
-        //         }
-
-        //         if (minutes !== this.realClock[1].current) {
-        //             this.flip(minutes, 1);
-        //             this.realClock[1].current = minutes;
-        //         }
-
-        //         if (seconds !== this.realClock[2].current) {
-        //             this.flip(seconds, 2);
-        //             this.realClock[2].current = seconds;
-        //         }
-        //     }, 1000);
-        // },
     },
     beforeDestroy() {
         clearInterval(this.timer);
@@ -239,7 +259,7 @@ export default {
     align-items: center;
 }
 
-button {
+.row-button button {
     margin-top: 20px;
     padding: 10px 20px;
     font-size: 18px;
@@ -250,7 +270,7 @@ button {
     cursor: pointer;
 }
 
-button:hover {
+.row-button button:hover {
     background-color: #504ba9;
 }
 

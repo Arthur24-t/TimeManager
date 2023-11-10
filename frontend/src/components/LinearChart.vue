@@ -16,14 +16,14 @@ export default {
   name: 'LineChart',
   components: { Line },
   props: {
-    needRefresh: {
-      type: Boolean,
+    userID: {
+      type: String,
     },
   },
   data() {
     return {
       status: [],
-      userID: localStorage.getItem('user'),
+      userId: this.userID || localStorage.getItem('user'),
       token: localStorage.getItem('token'),
       chartData: {
         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
@@ -88,7 +88,7 @@ export default {
     },
     getTime() {
       const params = this.getDaysOfTheYear()
-      GET(ENDPOINTS.GET_ALL_TIME + this.userID, this.token, params)
+      GET(ENDPOINTS.GET_ALL_TIME + this.userId, this.token, params)
         .then((response) => {
           const currentYear = new Date().getFullYear();
           const totalWorkMonth = {
@@ -127,7 +127,6 @@ export default {
                   pointRadius: 5,
                   pointBackgroundColor: ['#0000FF', '#800080', '#00FF00', '#FFC0CB', '#FFFF00', '#00FF80', '#FF0000', '#FFA500', '#87CEEB', '#8B4513', '#808080', '#FFFFFF'],
                   pointBorderColor: ['#0000FF', '#800080', '#00FF00', '#FFC0CB', '#FFFF00', '#00FF80', '#FF0000', '#FFA500', '#87CEEB', '#8B4513', '#808080', '#FFFFFF'],
-                  data: [],
                   fill: false,
                   data: Object.values(totalWorkMonth)
                 }

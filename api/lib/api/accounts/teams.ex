@@ -7,7 +7,7 @@ defmodule Api.Accounts.Team do
 
   schema "teams" do
     field :name, :string
-    many_to_many :users, Api.Accounts.User, join_through: "users_teams"
+    many_to_many :users, Api.Accounts.User, join_through: "users_teams", on_replace: :delete
     timestamps()
   end
 
@@ -15,5 +15,6 @@ defmodule Api.Accounts.Team do
     team
     |> cast(attrs, [:name])
     |> validate_required([:name])
+    |> unique_constraint(:name)
   end
 end
