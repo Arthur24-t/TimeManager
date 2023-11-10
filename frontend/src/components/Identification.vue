@@ -79,7 +79,6 @@ export default {
                     username: this.formData.username,
                     email: this.formData.email,
                     password: hashedPassword,
-                    role: 'user'
                 }
             }
             POST(ENDPOINTS.CREATE_USER, data)
