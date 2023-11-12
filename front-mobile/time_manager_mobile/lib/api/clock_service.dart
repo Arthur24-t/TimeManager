@@ -2,13 +2,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ClockService {
-  static const String baseUrl = "http://10.17.72.124:4000";
+  static const String baseUrl = "http://timemanager.freeboxos.fr:4000";
 
   static Future<Map<String, dynamic>> createClock(
-      Map<String, Map<String, Object>> clockData,
-      String xsrfToken,
-      String token,
-      String userId) async {
+      dynamic clockData, String xsrfToken, String token, String userId) async {
     final response = await http.post(
       Uri.parse('$baseUrl/api/clocks/$userId'),
       body: json.encode(clockData),

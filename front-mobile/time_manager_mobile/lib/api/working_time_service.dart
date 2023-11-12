@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class WorkingTimeService {
-  static const String baseUrl = "http://10.17.72.124:4000";
+  static const String baseUrl = "http://timemanager.freeboxos.fr:4000";
 
   static Future<Map<String, dynamic>> createWorkingTime(
       Map<String, Map<String, Object>> workingTimeData,

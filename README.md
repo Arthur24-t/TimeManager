@@ -102,3 +102,5 @@ See the associated README.md in the directory [API](./api/README.md#routes)
 See the associated README.md in the directory [Front-Mobile](./front-mobile/time_manager_mobile/README.md)
 
 ## Theme 7 : Security
+
+See the associated README.md in the directory [Security](./security/README.md)

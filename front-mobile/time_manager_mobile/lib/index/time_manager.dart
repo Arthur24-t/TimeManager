@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 import 'package:time_manager_mobile/api/working_time_service.dart';
 import 'package:time_manager_mobile/storage/local_storage.dart';
 
@@ -29,116 +30,132 @@ class PageTimeManager extends StatelessWidget {
         title: const Text('Time Manager'),
         centerTitle: true,
       ),
-      body: Stack(children: [
-        Positioned(
-          top: 30,
-          left: -50,
-          child: Transform.rotate(
-            angle: 0.7,
-            child: Container(
-              width: 200,
-              height: 250,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                color: const Color.fromARGB(
-                    255, 145, 188, 194), // Couleur du premier carré
+      body: Sizer(
+        builder: (context, orientation, deviceType) {
+          return Stack(children: [
+            Positioned(
+              top: 30,
+              left: -50,
+              child: Transform.rotate(
+                angle: 0.7,
+                child: Container(
+                  width: 200,
+                  height: 250,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    color: const Color.fromARGB(
+                        255, 145, 188, 194), // Couleur du premier carré
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-        Positioned(
-          top: 350,
-          left: 250,
-          child: Transform.rotate(
-            angle: 0.9,
-            child: Container(
-              width: 200,
-              height: 250,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                color: const Color.fromARGB(
-                    255, 145, 188, 194), // Couleur du premier carré
+            Positioned(
+              top: 350,
+              left: 250,
+              child: Transform.rotate(
+                angle: 0.9,
+                child: Container(
+                  width: 200,
+                  height: 250,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    color: const Color.fromARGB(
+                        255, 145, 188, 194), // Couleur du premier carré
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-        Center(
-          child: FutureBuilder(
-            future: Future.wait([getWorkingTimes()]),
-            builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
-              } else {
-                return workingTimes.isEmpty
-                    ? const Center(
-                        child: Text(
-                          "No recorded times yet",
-                          style: TextStyle(
-                            fontSize: 30,
-                          ),
-                        ),
-                      )
-                    : SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            const SizedBox(
-                              height: 20,
+            Center(
+              child: FutureBuilder(
+                future: Future.wait([getWorkingTimes()]),
+                builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  } else {
+                    return workingTimes.isEmpty
+                        ? Center(
+                            child: Text(
+                              "No recorded times yet",
+                              style: TextStyle(
+                                fontSize: 5.w,
+                              ),
                             ),
-                            const Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          )
+                        : SingleChildScrollView(
+                            child: Column(
                               children: [
-                                Text(
-                                  "Start",
-                                  style: TextStyle(
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.w500),
+                                const SizedBox(
+                                  height: 20,
                                 ),
-                                Text(
-                                  "End",
-                                  style: TextStyle(
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.w500),
-                                )
+                                const Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Text(
+                                      "Start",
+                                      style: TextStyle(
+                                          fontSize: 25,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    Text(
+                                      "End",
+                                      style: TextStyle(
+                                          fontSize: 25,
+                                          fontWeight: FontWeight.w500),
+                                    )
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Column(
+                                    children: List.generate(
+                                        workingTimes.length,
+                                        (index) => Container(
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(50),
+                                              ),
+                                              margin: const EdgeInsets.only(
+                                                  top: 10.0),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 2,
+                                                      horizontal: 15),
+                                              height: 50,
+                                              child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceAround,
+                                                  children: [
+                                                    Text(
+                                                      workingTimes[index]
+                                                          ['start'],
+                                                      style: TextStyle(
+                                                          fontSize: 3.w),
+                                                    ),
+                                                    Text(
+                                                      workingTimes[index]
+                                                          ['end'],
+                                                      style: TextStyle(
+                                                          fontSize: 3.w),
+                                                    ),
+                                                  ]),
+                                            ))),
+                                const SizedBox(
+                                  height: 30,
+                                ),
                               ],
                             ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Column(
-                                children: List.generate(
-                                    workingTimes.length,
-                                    (index) => Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(50),
-                                          ),
-                                          margin:
-                                              const EdgeInsets.only(top: 10.0),
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 2, horizontal: 15),
-                                          height: 50,
-                                          child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceAround,
-                                              children: [
-                                                Text(workingTimes[index]
-                                                    ['start']),
-                                                Text(
-                                                    workingTimes[index]['end']),
-                                              ]),
-                                        ))),
-                            const SizedBox(
-                              height: 30,
-                            ),
-                          ],
-                        ),
-                      );
-              }
-            },
-          ),
-        ),
-      ]),
+                          );
+                  }
+                },
+              ),
+            ),
+          ]);
+        },
+      ),
     );
   }
 }

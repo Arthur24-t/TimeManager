@@ -31,8 +31,15 @@ defmodule ApiWeb.UserController do
   def create(conn, %{"user" => user_params}) do
     current_user = conn.assigns[:current_user]
 
+    sanitized_params =
+      if current_user.role not in ["superadmin"] do
+        Map.delete(user_params, "role")
+      else
+        user_params
+      end
+
     if current_user.role in ["superadmin"] do
-      case Accounts.create_user(user_params) do
+      case Accounts.create_user(sanitized_params) do
         {:ok, user} ->
           conn = fetch_session(conn)
 
@@ -65,6 +72,13 @@ defmodule ApiWeb.UserController do
   def update(conn, %{"id" => id, "user" => user_params}) do
     current_user = conn.assigns[:current_user]
 
+    sanitized_params =
+      if current_user.role not in ["superadmin"] do
+        Map.delete(user_params, "role")
+      else
+        user_params
+      end
+
     case current_user do
       nil ->
         conn
@@ -75,7 +89,7 @@ defmodule ApiWeb.UserController do
         user = Accounts.get_user!(id)
 
         if allowed_to_access?(current_user, user) do
-          with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
+          with {:ok, %User{} = user} <- Accounts.update_user(user, sanitized_params) do
             render(conn, "show.json", user: user)
           else
             _ -> conn |> put_status(:unprocessable_entity) |> render("error.json")
@@ -90,7 +104,7 @@ defmodule ApiWeb.UserController do
     current_user = conn.assigns[:current_user]
     user = Accounts.get_user!(id)
 
-    if allowed_to_access?(current_user, user) do
+    if current_user.role in ["superadmin"] or current_user.id == user.id do
       case Accounts.delete_user(user) do
         {:ok, %User{}} ->
           send_resp(conn, :no_content, "")
@@ -130,7 +144,7 @@ defmodule ApiWeb.UserController do
     current_user = conn.assigns[:current_user]
     user = Accounts.get_user!(user_id)
 
-    if allowed_to_access?(current_user, user) do
+    if current_user.role in ["admin", "superadmin"] do
       case Accounts.remove_team_from_user(user_id, team_id) do
         {:ok, %User{}} ->
           send_resp(conn, :no_content, "")

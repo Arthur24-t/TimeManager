@@ -8,10 +8,12 @@ def session():
     # Create a session object that will be used for all requests
     session = requests.Session()
     login_url = f"{BASE_URL}/login"
-    credentials = {"user": {
-        "email": "tester@example.com",
-        "password": "strong_password"
-    }}
+    credentials = {
+        "user": {
+            "email": "testerSuperAdmin@example.com",
+            "password": "strong_password"
+        }
+    }
     response = session.post(login_url, json=credentials)
     assert response.status_code == 200
     jwt_token = response.json().get('token')
@@ -20,6 +22,7 @@ def session():
 
     # Your code to close the session goes here
     session.close()
+    
 def test_request_with_session(session):
     response = session.get(f"{BASE_URL}/api/users")
     assert response.status_code == 200
@@ -31,7 +34,7 @@ def login_user():
     register_url = f"{BASE_URL}/login"
     user_data = {
         "user": {
-            "email": "tester@example.com",
+            "email": "testerSuperAdmin@example.com",
             "password": "strong_password"
         }
     }
@@ -39,7 +42,15 @@ def login_user():
     assert response.status_code == 200
     # If the user ID is returned in the response, capture it
     user_id = response.json().get('user').get('id')
-    return user_id, user_data['user']['email'], user_data['user']['password']
+    user_email = response.json().get('user').get('email')
+    return user_id, user_email, user_data['user']['password']
+
+def test_get_user_id(session, login_user):
+    user_id, _, _ = login_user
+    response = session.get(f'{BASE_URL}/api/users/{user_id}')
+    assert response.status_code == 200
+    new_user_id = response.json().get('data').get('id')
+    assert user_id == new_user_id
 
 @pytest.fixture(scope="module")
 def created_team(session):
@@ -68,8 +79,49 @@ def created_team(session):
     return team_id
 
 
-def test_add_team_to_user(session, created_team, login_user):
+def test_add_team_to_superadmin(session, created_team, login_user):
     user_id, _, _ = login_user
+    team_id = created_team
+    url = f"{BASE_URL}/api/users/{user_id}/teams/{team_id}"
+    response = session.post(url)
+    assert response.status_code == 200
+
+@pytest.fixture(scope="module")
+def get_admin(session):
+    url = f"{BASE_URL}/api/users"
+    response = session.get(url)
+    assert response.status_code == 200
+    users = response.json().get('data', [])
+    user = next((user for user in users if user.get('username') == 'testerAdmin'), None)
+    user_id = user.get('id')
+    return user_id
+
+@pytest.fixture(scope="module")
+def get_user(session):
+    url = f"{BASE_URL}/api/users"
+    response = session.get(url)
+    assert response.status_code == 200
+    users = response.json().get('data', [])
+    user = next((user for user in users if user.get('username') == 'testeruser'), None)
+    user_id = user.get('id')
+    return user_id
+
+def test_add_team_to_superadmin(session, login_user, created_team):
+    user_id, _, _ = login_user
+    team_id = created_team
+    url = f"{BASE_URL}/api/users/{user_id}/teams/{team_id}"
+    response = session.post(url)
+    assert response.status_code == 200
+
+def test_add_team_to_admin(session, get_admin, created_team):
+    user_id = get_admin
+    team_id = created_team
+    url = f"{BASE_URL}/api/users/{user_id}/teams/{team_id}"
+    response = session.post(url)
+    assert response.status_code == 200
+
+def test_add_team_to_user(session, get_user, created_team):
+    user_id = get_user
     team_id = created_team
     url = f"{BASE_URL}/api/users/{user_id}/teams/{team_id}"
     response = session.post(url)
@@ -80,23 +132,23 @@ def test_get_all_team(session):
     response = session.get(url)
     assert response.status_code == 200
     
-def test_remove_team_from_user(session, created_team, login_user):
+def test_remove_team_from_superadmin(session, created_team, login_user):
     user_id, _, _ = login_user
     team_id = created_team
     url = f"{BASE_URL}/api/users/{user_id}/teams/{team_id}"
     response = session.delete(url)
-    assert response.status_code == 200
+    assert response.status_code == 204
 
 
 @pytest.fixture(scope="module") 
 def test_create_clock(session , login_user):
     user_id, _, _ = login_user
     clock_data = {
-    "clock": {
-        "time": "2023-10-12 12:13:12",
-        "status": True
+        "clock": {
+            "time": "2023-10-12 12:13:12",
+            "status": True
+        }
     }
-}
     url = f"{BASE_URL}/api/clocks/{user_id}"
     response = session.post(url, json=clock_data)
     assert response.status_code == 201
@@ -215,18 +267,16 @@ def test_superadmin_delete_working_time_for_user(session, test_superadmin_create
     response = session.delete(url)
     assert response.status_code == 204
 
-
-
 @pytest.fixture(scope="module") 
 def test_create_admin(session):
     user_data = {
-  "user": {
-    "username": "testadmin",
-    "email": "testadmin@testadmin.com",
-    "password": "1234",
-    "role" : "admin"
-  }
-}
+    "user": {
+            "username": "testadmin",
+            "email": "testadmin@testadmin.com",
+            "password": "1234",
+            "role" : "admin"
+        }
+    }
     url = f"{BASE_URL}/api/users"
     response = session.post(url, json=user_data)
     assert response.status_code == 201

@@ -25,7 +25,7 @@ class SecureStorageService {
     return await _storage.read(key: 'email');
   }
 
-  Future<List<dynamic>>getTimeData() async {
+  Future<List<dynamic>> getTimeData() async {
     String? data = await _storage.read(key: 'timeData');
     if (data != null) {
       List<dynamic> decodedData = json.decode(data);

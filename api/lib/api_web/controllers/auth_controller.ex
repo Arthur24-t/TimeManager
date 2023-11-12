@@ -5,7 +5,8 @@ defmodule ApiWeb.AuthController do
   alias Api.Auth.Guardian
 
   def register(conn, %{"user" => user_params}) do
-    case Accounts.create_user(user_params) do
+    sanitized_params = Map.delete(user_params, "role")
+    case Accounts.create_user(sanitized_params) do
       {:ok, user} ->
         conn = fetch_session(conn)
         csrf_token = Plug.CSRFProtection.get_csrf_token()

@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:time_manager_mobile/storage/local_storage.dart';
 
 class UserService {
-  static const String baseUrl = "http://10.17.72.124:4000";
+  static const String baseUrl = "http://timemanager.freeboxos.fr:4000";
 
   static Future<Map<String, dynamic>> getUserByEmailAndUsername(
       String token) async {
@@ -28,7 +28,10 @@ class UserService {
       },
     );
     final cookies = response.headers['set-cookie'];
-    secureStorageService.writeXSRF(cookies!);
+    if (cookies != null) {
+      final xsrfToken = extractXsrfToken(cookies);
+      secureStorageService.writeXSRF(xsrfToken);
+    }
     return json.decode(response.body);
   }
 
